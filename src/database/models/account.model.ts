@@ -5,8 +5,11 @@ import {
   DataType,
   CreatedAt,
   UpdatedAt,
-  HasOne
+  HasOne,
+  BeforeCreate,
+  BeforeUpdate
 } from 'sequelize-typescript';
+import bcrypt from 'bcryptjs';
 
 import AccountAttributes from '~/type';
 import CandidateInfo from './candidateInfo.model';
@@ -22,43 +25,61 @@ class Account extends Model<AccountAttributes> {
     primaryKey: true,
     autoIncrement: true
   })
-  declare AccountId: number;
+  declare accountId: number;
 
   @Column({
     type: DataType.STRING(255),
-    allowNull: false
+    allowNull: false,
+    unique: true
   })
-  declare Username: string;
+  declare username: string;
 
   @Column({
     type: DataType.STRING(100),
-    allowNull: true
+    allowNull: false,
+    unique: true
   })
-  declare Email: string | null;
+  declare email: string;
+
+  @Column({
+    type: DataType.STRING(100),
+    allowNull: false,
+    unique: true
+  })
+  declare phone: string;
 
   @Column({
     type: DataType.STRING(100),
     allowNull: false
   })
-  declare Password: string;
+  declare password: string;
+
+  // password hooks
+  @BeforeCreate
+  @BeforeUpdate
+  static async hashPassword(account: Account) {
+    if (account.changed('password')) {
+      account.password = await bcrypt.hash(account.password, 12);
+    }
+  }
 
   @Column({
-    type: DataType.ENUM('enterprise', 'candidate'),
+    type: DataType.ENUM('enterprise', 'candidate', 'user'),
     allowNull: false
   })
-  declare Role: 'enterprise' | 'candidate';
+  declare role: 'enterprise' | 'candidate' | 'user';
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true
   })
-  declare Verified: boolean | null;
+  declare verified: boolean | null;
 
   @Column({
     type: DataType.STRING(255),
     defaultValue: 'default.jpg'
   })
-  declare Image: string;
+  declare image: string;
 
   @CreatedAt
   declare created_at: Date;
@@ -71,6 +92,14 @@ class Account extends Model<AccountAttributes> {
 
   @HasOne(() => EnterpriseInfo)
   enterpriseInfo!: EnterpriseInfo;
+
+  // verify password
+  async verifyPassword(
+    candidatePassword: string,
+    userPassword: string
+  ): Promise<boolean> {
+    return await bcrypt.compare(candidatePassword, userPassword);
+  }
 }
 
 export default Account;

@@ -12,7 +12,7 @@ class Tag extends Model<TagAttributes> {
     primaryKey: true,
     autoIncrement: true
   })
-  declare TagId: number;
+  declare tagId: number;
 
   @HasMany(() => CandidateInfo) // Define foreign key relationship
   candidateInfos!: CandidateInfo[];
@@ -21,13 +21,13 @@ class Tag extends Model<TagAttributes> {
     type: DataType.STRING,
     allowNull: false
   })
-  declare Name: string;
+  declare name: string;
 
   @Column({
     type: DataType.TEXT,
     allowNull: true
   })
-  declare TagDescription: string;
+  declare tagDescription: string;
 }
 
 export default Tag;

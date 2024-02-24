@@ -38,7 +38,7 @@ const handleCastErrorDB = (err: any) => {
 };
 
 const handleDuplicateFieldsDB = (err: any) => {
-  const value = err.keyValue.name;
+  const value = err.errors[0].value;
   const message = `Duplicate field value: ${value}. Please use another value!`;
   // 400 for bad request
   return new AppError(message, 400);
@@ -81,7 +81,7 @@ const errorHandler = (
     } else if (err.name === 'ValidationError') {
       error = handleValidationErrorDB(error);
     }
-    if (err.message.startsWith('E11000')) {
+    if (err.name === 'SequelizeUniqueConstraintError') {
       error = handleDuplicateFieldsDB(error);
     }
     if (err.name === 'JsonWebTokenError') {

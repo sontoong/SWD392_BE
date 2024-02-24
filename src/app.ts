@@ -9,6 +9,9 @@ import cors from 'cors';
 import AppError from './utils/appError';
 import globalErrorHandler from './utils/globalErrorHandler';
 
+import adminRouter from './routes/admin.route';
+import userRouter from './routes/user.route';
+
 import morgan from 'morgan';
 const app = express();
 
@@ -66,7 +69,8 @@ app.use(cors(corsOptions));
 app.use(express.static(`${__dirname}/public`));
 
 // 2) ROUTES
-// app.use('/api/v1/admin', adminRouter);
+app.use('/api/v1/admin', adminRouter);
+app.use('/api/v1/user', userRouter);
 
 // 3) ERROR HANDLING
 app.all('*', (req, res, next) => {

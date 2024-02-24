@@ -22,34 +22,34 @@ class EnterpriseInfo extends Model<EnterpriseInfoAttributes> {
     type: DataType.INTEGER,
     unique: true
   })
-  declare AccountId: number;
+  declare accountId: number;
 
-  @BelongsTo(() => Account, { foreignKey: 'AccountId' })
+  @BelongsTo(() => Account, { foreignKey: 'accountId' })
   account!: Account;
 
   @Column({
     type: DataType.STRING,
     allowNull: false
   })
-  declare CompanyName: string;
+  declare companyName: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false
   })
-  declare Contact: string;
+  declare contact: string;
 
   @Column({
     type: DataType.BLOB,
     allowNull: true
   })
-  declare VerificationDocuments: Buffer;
+  declare verificationDocuments: Buffer;
 
   @Column({
     type: DataType.STRING,
     allowNull: false
   })
-  declare Address: string;
+  declare address: string;
 }
 
 export default EnterpriseInfo;

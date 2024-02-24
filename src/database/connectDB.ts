@@ -17,7 +17,8 @@ export default function connectDB() {
       idle: dbConfig.pool.idle
     },
     port: dbConfig.port,
-    models: [__dirname + '/models']
+    models: [__dirname + '/models'],
+    logging: false
   });
 
   sequelize
@@ -31,7 +32,7 @@ export default function connectDB() {
 
   // Synchronize models with the database
   sequelize
-    .sync({ force: false })
+    .sync({ force: false, alter: true })
     .then(() => {
       console.log('Database tables synchronized');
     })
