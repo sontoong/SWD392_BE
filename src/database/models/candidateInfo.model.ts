@@ -25,79 +25,79 @@ class CandidateInfo extends Model<CandidateInfoAttributes> {
     type: DataType.INTEGER,
     unique: true
   })
-  declare AccountId: number;
+  declare accountId: number;
 
-  @BelongsTo(() => Account, { foreignKey: 'AccountId' })
+  @BelongsTo(() => Account, { foreignKey: 'accountId' })
   account!: Account;
 
   @Column({
     type: DataType.STRING,
     allowNull: false
   })
-  declare Fullname: string;
+  declare fullname: string;
 
   @Column({
     type: DataType.ENUM('male', 'female', 'other'),
     allowNull: false
   })
-  declare Gender: 'male' | 'female' | 'other';
+  declare gender: 'male' | 'female' | 'other';
 
   @Column({
     type: DataType.STRING,
     allowNull: false
   })
-  declare Address: string;
+  declare address: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false
   })
-  declare Nationality: string;
+  declare nationality: string;
 
   @Column({
     type: DataType.ENUM('junior', 'middle', 'senior', 'expert'),
     allowNull: true
   })
-  declare Experience: 'junior' | 'middle' | 'senior' | 'expert';
+  declare experience: 'junior' | 'middle' | 'senior' | 'expert';
 
   @Column({
     type: DataType.STRING,
     allowNull: true
   })
-  declare Specialty: string;
+  declare specialty: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false
   })
-  declare JobTitle: string;
+  declare jobTitle: string;
 
   @Column({
     type: DataType.DATE,
     allowNull: false
   })
-  declare Dob: Date;
+  declare dob: Date;
 
   @Column({
     type: DataType.TEXT,
     allowNull: false
   })
-  declare ProfileDescription: string;
+  declare profileDescription: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: true
   })
-  declare Subscription: string;
+  declare subscription: string;
 
   @ForeignKey(() => Tag)
   @Column({
     type: DataType.INTEGER,
     allowNull: true
   })
-  declare TagId: number;
+  declare tagId: number;
 
-  @BelongsTo(() => Tag, { foreignKey: 'TagId' })
+  @BelongsTo(() => Tag, { foreignKey: 'tagId' })
   tag!: Tag;
 }
 

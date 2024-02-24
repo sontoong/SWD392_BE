@@ -1,106 +1,103 @@
+// Account interface
 interface AccountAttributes {
-  AccountId: number;
-  Username: string;
-  Email: string | null;
-  Password: string;
-  Role: 'enterprise' | 'candidate';
-  Verified?: boolean | null;
-  Image?: string;
-  created_at?: Date;
-  updated_at?: Date;
+  accountId?: number;
+  username: string;
+  email: string;
+  phone: string;
+  password: string;
+  role: 'enterprise' | 'candidate' | 'user';
+  verified?: boolean | null;
+  image?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
-
-export default AccountAttributes;
 
 // Application interface
 interface ApplicationAttributes {
-  ApplicationId: number;
-  PostId: number;
-  CreateAt: Date;
-  Status?: 'pending' | 'accepted' | 'rejected';
-  CV: Buffer;
-  InterviewDate: Date;
-  InterviewTime: string;
-  CandidateId: number;
+  applicationId?: number;
+  postId: number;
+  status?: 'pending' | 'accepted' | 'rejected';
+  cv: Buffer;
+  interviewDate: Date;
+  interviewTime: string;
+  candidateId: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
-
-export default ApplicationAttributes;
 
 // CandidateInfo interface
 interface CandidateInfoAttributes {
-  AccountId: number;
-  Fullname: string;
-  Gender: 'male' | 'female' | 'other';
-  Address: string;
-  Nationality: string;
-  Experience?: 'junior' | 'middle' | 'senior' | 'expert';
-  Specialty?: string;
-  JobTitle: string;
-  Dob: Date;
-  ProfileDescription: string;
-  Subscription?: string;
-  TagId?: number;
+  accountId?: number;
+  fullname: string;
+  gender: 'male' | 'female' | 'other';
+  address: string;
+  nationality: string;
+  experience?: 'junior' | 'middle' | 'senior' | 'expert';
+  specialty?: string;
+  jobTitle: string;
+  dob: Date;
+  profileDescription: string;
+  subscription?: string;
+  tagId?: number;
 }
-
-export default CandidateInfoAttributes;
 
 // Contract interface
 interface ContractAttributes {
-  ContractId?: number;
+  contractId?: number;
 }
-
-export default ContractAttributes;
 
 // EnterpriseInfo interface
 interface EnterpriseInfoAttributes {
-  AccountId: number;
-  CompanyName: string;
-  Contact: string;
-  VerificationDocuments?: Buffer;
-  Address: string;
+  accountId?: number;
+  companyName: string;
+  contact: string;
+  verificationDocuments?: Buffer;
+  address: string;
 }
-
-export default EnterpriseInfoAttributes;
 
 // Notification interface
 interface NotificationAttributes {
-  NotificationId?: number;
+  notificationId?: number;
 }
-
-export default NotificationAttributes;
 
 // Payment interface
 interface PaymentAttributes {
-  PaymentId?: number;
-  CreateAt: Date;
-  Method: string;
-  CandidateId: number;
-  EnterpriseId: number;
+  paymentId?: number;
+  createAt: Date;
+  method: string;
+  candidateId: number;
+  enterpriseId: number;
 }
-
-export default PaymentAttributes;
 
 // Post interface
 interface PostAttributes {
-  PostId?: number;
-  TagId: number;
-  EnterpriseId: number;
-  Content: string;
-  PostTitle: string;
-  Budget: number;
-  JobTitle: string;
-  Duration?: number | null;
-  Experience: 'junior' | 'middle' | 'senior' | 'expert';
-  ExpireDate?: Date | null;
+  postId?: number;
+  tagId: number;
+  enterpriseId: number;
+  content: string;
+  postTitle: string;
+  budget: number;
+  jobTitle: string;
+  duration?: number | null;
+  experience: 'junior' | 'middle' | 'senior' | 'expert';
+  expireDate?: Date | null;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
-
-export default PostAttributes;
 
 // Tag interface
 interface TagAttributes {
-  TagId?: number;
-  Name: string;
-  TagDescription?: string;
+  tagId?: number;
+  name: string;
+  tagDescription?: string;
 }
 
+export default AccountAttributes;
+export default ApplicationAttributes;
+export default CandidateInfoAttributes;
+export default ContractAttributes;
+export default EnterpriseInfoAttributes;
+export default NotificationAttributes;
+export default PaymentAttributes;
+export default PostAttributes;
 export default TagAttributes;
