@@ -3,7 +3,6 @@ import catchAsync from '~/utils/catchAsync';
 import AppError from '~/utils/appError';
 import jwt from 'jsonwebtoken';
 import Account from '~/database/models/account.model';
-import AccountAttributes from '~/type';
 import { filterObject } from '~/utils/filterObject';
 
 declare global {
@@ -14,7 +13,14 @@ declare global {
   }
 }
 
-const allowedFields = ['username', 'email', 'image', 'role', 'phone'];
+const allowedFields = [
+  'username',
+  'email',
+  'image',
+  'role',
+  'phone',
+  'accountId'
+];
 
 export const protectRoute = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -59,8 +65,8 @@ export const protectRoute = catchAsync(
     // }
 
     // Grant access to the protected route
-    filterObject(currentUser, allowedFields);
-    req.user = currentUser.toJSON() as AccountAttributes;
+    const filteredUser = filterObject(currentUser, allowedFields);
+    req.user = filteredUser as AccountAttributes;
     next();
   }
 );

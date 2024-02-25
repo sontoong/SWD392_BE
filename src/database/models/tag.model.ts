@@ -1,6 +1,12 @@
-import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
-import TagAttributes from '~/type';
-import CandidateInfo from './candidateInfo.model';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  BelongsToMany
+} from 'sequelize-typescript';
+import Post from './post.model';
+import PostTag from './postTag.model';
 
 @Table({
   timestamps: false,
@@ -12,22 +18,23 @@ class Tag extends Model<TagAttributes> {
     primaryKey: true,
     autoIncrement: true
   })
-  declare tagId: number;
+  tagId!: number;
 
-  @HasMany(() => CandidateInfo) // Define foreign key relationship
-  candidateInfos!: CandidateInfo[];
+  // Define Many-to-Many relationship with Post model
+  @BelongsToMany(() => Post, () => PostTag)
+  posts!: Post[];
 
   @Column({
     type: DataType.STRING,
     allowNull: false
   })
-  declare name: string;
+  name!: string;
 
   @Column({
     type: DataType.TEXT,
     allowNull: true
   })
-  declare tagDescription: string;
+  tagDescription!: string;
 }
 
 export default Tag;

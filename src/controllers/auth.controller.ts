@@ -5,7 +5,6 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env' });
 
 import Account from '~/database/models/account.model';
-import AccountAttributes from '~/type';
 
 import catchAsync from '../utils/catchAsync';
 import AppError from '~/utils/appError';
@@ -63,7 +62,7 @@ class AuthController {
         email: email,
         password: password,
         phone: phone,
-        role: 'candidate'
+        role: 'user'
       });
       this.createSendToken(newUser, 201, res);
     }
@@ -79,8 +78,6 @@ class AuthController {
       // Check if user exists and password is correct
 
       const user = await Account.findOne({ where: { username } });
-
-      console.log(user);
 
       if (!user || !(await user.verifyPassword(password, user.password!))) {
         return next(new AppError('Incorrect username or password!', 401));

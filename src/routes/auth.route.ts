@@ -1,6 +1,6 @@
 import express from 'express';
 import { protectRoute, restrictTo } from '~/middlewares/jwt.middleware';
-import authController from '~/controllers/authen.controller';
+import authController from '~/controllers/auth.controller';
 
 const router = express.Router();
 

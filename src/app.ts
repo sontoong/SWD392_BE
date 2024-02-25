@@ -5,17 +5,30 @@ import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+
+import * as swaggerDocument from '../swagger.json';
 
 import AppError from './utils/appError';
 import globalErrorHandler from './utils/globalErrorHandler';
 
 import adminRouter from './routes/admin.route';
-import userRouter from './routes/user.route';
+import candidateRouter from './routes/candidate.route';
+import enterpriseRouter from './routes/enterprise.route';
+import authRouter from './routes/auth.route';
+import postRouter from './routes/post.route';
 
 import morgan from 'morgan';
 const app = express();
 
 // 1) GLOBAL MIDDLEWARES
+
+// Body parser, reading data from body into req.body
+app.use(bodyParser.json());
+
+// serve swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // set security HTTP headers
 app.use(helmet());
 
@@ -69,8 +82,11 @@ app.use(cors(corsOptions));
 app.use(express.static(`${__dirname}/public`));
 
 // 2) ROUTES
+app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/admin', adminRouter);
-app.use('/api/v1/user', userRouter);
+app.use('/api/v1/candidate', candidateRouter);
+app.use('/api/v1/enterprise', enterpriseRouter);
+app.use('/api/v1/post', postRouter);
 
 // 3) ERROR HANDLING
 app.all('*', (req, res, next) => {

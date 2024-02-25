@@ -7,11 +7,11 @@ import {
   UpdatedAt,
   HasOne,
   BeforeCreate,
-  BeforeUpdate
+  BeforeUpdate,
+  Default
 } from 'sequelize-typescript';
 import bcrypt from 'bcryptjs';
 
-import AccountAttributes from '~/type';
 import CandidateInfo from './candidateInfo.model';
 import EnterpriseInfo from './enterpriseInfo.model';
 
@@ -64,10 +64,17 @@ class Account extends Model<AccountAttributes> {
   }
 
   @Column({
-    type: DataType.ENUM('enterprise', 'candidate', 'user'),
-    allowNull: false
+    type: DataType.ENUM('enterprise', 'candidate', 'user', 'admin'),
+    allowNull: false,
+    defaultValue: 'user'
   })
-  declare role: 'enterprise' | 'candidate' | 'user';
+  declare role: 'enterprise' | 'candidate' | 'user' | 'admin';
+
+  @Column({
+    type: DataType.STRING(255),
+    defaultValue: 'default.jpg'
+  })
+  declare image: string;
 
   @Column({
     type: DataType.BOOLEAN,
@@ -76,10 +83,11 @@ class Account extends Model<AccountAttributes> {
   declare verified: boolean | null;
 
   @Column({
-    type: DataType.STRING(255),
-    defaultValue: 'default.jpg'
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: true
   })
-  declare image: string;
+  declare active: boolean | null;
 
   @CreatedAt
   declare created_at: Date;
