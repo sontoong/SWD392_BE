@@ -8,7 +8,6 @@ import {
   AutoIncrement
 } from 'sequelize-typescript';
 
-import CandidateInfoAttributes from '~/type';
 import Account from './account.model';
 import Tag from './tag.model';
 

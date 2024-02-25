@@ -6,7 +6,6 @@ import {
   ForeignKey,
   BelongsTo
 } from 'sequelize-typescript';
-import EnterpriseInfoAttributes from '~/type';
 import Account from './account.model';
 
 @Table({

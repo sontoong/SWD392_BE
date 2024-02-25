@@ -31,28 +31,12 @@ export default function connectDB() {
     });
 
   // Synchronize models with the database
-  sequelize
-    .sync({ force: false, alter: true })
-    .then(() => {
-      console.log('Database tables synchronized');
-    })
-    .catch((error) => {
-      console.error('Error synchronizing database tables:', error);
-    });
-
-  // // Create a connection
-  // const connection: Connection = mysql.createConnection(dbConfig);
-
-  // // Connect to the database
-  // connection.connect((err: MysqlError) => {
-  //   if (err) {
-  //     console.error('Error connecting to MySQL database:', err);
-  //     return;
-  //   }
-  //   console.log('Connected to MySQL database');
-  // });
-  // // Perform database operations here...
-
-  // // Close the connection when done
-  // connection.end();
+  // sequelize
+  //   .sync({ force: true, alter: true })
+  //   .then(() => {
+  //     console.log('Database tables synchronized');
+  //   })
+  //   .catch((error) => {
+  //     console.error('Error synchronizing database tables:', error);
+  //   });
 }

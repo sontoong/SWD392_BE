@@ -5,9 +5,10 @@ interface AccountAttributes {
   email: string;
   phone: string;
   password: string;
-  role: 'enterprise' | 'candidate' | 'user';
-  verified?: boolean | null;
+  role: 'enterprise' | 'candidate' | 'user' | 'admin';
   image?: string;
+  verified?: boolean | null;
+  active?: boolean | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -72,14 +73,16 @@ interface PaymentAttributes {
 // Post interface
 interface PostAttributes {
   postId?: number;
-  tagId: number;
+  tagId?: number;
   enterpriseId: number;
   content: string;
   postTitle: string;
   budget: number;
   jobTitle: string;
   duration?: number | null;
+  participants?: number | null;
   experience: 'junior' | 'middle' | 'senior' | 'expert';
+  // experience: string[];
   expireDate?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
@@ -92,12 +95,12 @@ interface TagAttributes {
   tagDescription?: string;
 }
 
-export default AccountAttributes;
-export default ApplicationAttributes;
-export default CandidateInfoAttributes;
-export default ContractAttributes;
-export default EnterpriseInfoAttributes;
-export default NotificationAttributes;
-export default PaymentAttributes;
-export default PostAttributes;
-export default TagAttributes;
+module.exports = AccountAttributes;
+module.exports = ApplicationAttributes;
+module.exports = CandidateInfoAttributes;
+module.exports = ContractAttributes;
+module.exports = EnterpriseInfoAttributes;
+module.exports = NotificationAttributes;
+module.exports = PaymentAttributes;
+module.exports = PostAttributes;
+module.exports = TagAttributes;
