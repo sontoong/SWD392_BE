@@ -18,6 +18,7 @@ import candidateRouter from './routes/candidate.route';
 import enterpriseRouter from './routes/enterprise.route';
 import authRouter from './routes/auth.route';
 import postRouter from './routes/post.route';
+import tagRouter from './routes/tag.route';
 
 import morgan from 'morgan';
 const app = express();
@@ -28,30 +29,9 @@ const app = express();
 app.use(bodyParser.json());
 
 // serve swagger
-
-// Swagger definition
-// const swaggerDefinition = {
-//   openapi: '3.0.0',
-//   info: {
-//     title: 'Express API Documentation',
-//     version: '1.0.0',
-//     description: 'Documentation for Express API'
-//   },
-//   servers: [
-//     {
-//       url: 'http://localhost:3000', // Update with your server URL
-//       description: 'Development server'
-//     }
-//   ]
-// };
-
 const options = {
-  // swaggerDefinition,
   explorer: true
-  // apis: ['./controllers/*.ts', './routes/*.ts']
 };
-
-// const swaggerSpec = swaggerJsdoc(options);
 
 app.use(
   '/api-docs',
@@ -117,6 +97,7 @@ app.use('/api/v1/admin', adminRouter);
 app.use('/api/v1/candidate', candidateRouter);
 app.use('/api/v1/enterprise', enterpriseRouter);
 app.use('/api/v1/post', postRouter);
+app.use('/api/v1/tag', tagRouter);
 
 // 3) ERROR HANDLING
 app.all('*', (req, res, next) => {

@@ -91,8 +91,9 @@ interface PostAttributes {
 // Tag interface
 interface TagAttributes {
   tagId?: number;
-  name: string;
-  tagDescription?: string;
+  tagName: string;
+  tagDescription?: string | null;
+  popularity?: number;
 }
 
 module.exports = AccountAttributes;
