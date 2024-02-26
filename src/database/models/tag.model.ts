@@ -26,15 +26,27 @@ class Tag extends Model<TagAttributes> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false
+    allowNull: false,
+    unique: true
   })
-  name!: string;
+  tagName!: string;
 
   @Column({
     type: DataType.TEXT,
     allowNull: true
   })
-  tagDescription!: string;
+  tagDescription!: string | null;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+    validate: {
+      min: 0,
+      max: 10
+    }
+  })
+  popularity?: number;
 }
 
 export default Tag;
