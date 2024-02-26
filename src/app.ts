@@ -6,6 +6,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
 
 import * as swaggerDocument from '../swagger.json';
 
@@ -27,7 +28,36 @@ const app = express();
 app.use(bodyParser.json());
 
 // serve swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// Swagger definition
+// const swaggerDefinition = {
+//   openapi: '3.0.0',
+//   info: {
+//     title: 'Express API Documentation',
+//     version: '1.0.0',
+//     description: 'Documentation for Express API'
+//   },
+//   servers: [
+//     {
+//       url: 'http://localhost:3000', // Update with your server URL
+//       description: 'Development server'
+//     }
+//   ]
+// };
+
+const options = {
+  // swaggerDefinition,
+  explorer: true
+  // apis: ['./controllers/*.ts', './routes/*.ts']
+};
+
+// const swaggerSpec = swaggerJsdoc(options);
+
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, options)
+);
 
 // set security HTTP headers
 app.use(helmet());

@@ -13,6 +13,7 @@
   "paths": {
     "/auth/signup": {
       "post": {
+        "tags": ["Auth"],
         "summary": "Register a new user",
         "requestBody": {
           "required": true,
@@ -40,6 +41,7 @@
     },
     "/auth/login": {
       "post": {
+        "tags": ["Auth"],
         "summary": "Log in a user",
         "requestBody": {
           "required": true,
@@ -69,11 +71,524 @@
     },
     "/auth/logout": {
       "get": {
+        "tags": ["Auth"],
         "summary": "Log out a user",
         "responses": {
           "200": { "description": "User logged out successfully" },
           "500": { "description": "Internal server error" }
         }
+      }
+    },
+    "/admin/candidate": {
+      "get": {
+        "summary": "Retrieve a list of candidate accounts",
+        "description": "Retrieve a list of all candidate accounts.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["Admin"],
+        "responses": {
+          "200": {
+            "description": "A list of candidate accounts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Account"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/candidate/{username}": {
+      "get": {
+        "summary": "Retrieve details of a specific candidate account",
+        "description": "Retrieve details of a specific candidate account by username.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Username of the candidate account to retrieve."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Details of the candidate account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Candidate account not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update information of a specific candidate account",
+        "description": "Update information of a specific candidate account by username.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Username of the candidate account to update."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated candidate account"
+          },
+          "404": {
+            "description": "Candidate account not found"
+          }
+        }
+      }
+    },
+    "/admin/enterprise": {
+      "get": {
+        "summary": "Retrieve a list of enterprise accounts",
+        "description": "Retrieve a list of all enterprise accounts.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["Admin"],
+        "responses": {
+          "200": {
+            "description": "A list of enterprise accounts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Account"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/enterprise/{username}": {
+      "get": {
+        "summary": "Retrieve details of a specific enterprise account",
+        "description": "Retrieve details of a specific enterprise account by username.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Username of the enterprise account to retrieve."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Details of the enterprise account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Enterprise account not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update information of a specific enterprise account",
+        "description": "Update information of a specific enterprise account by username.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Username of the enterprise account to update."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated enterprise account"
+          },
+          "404": {
+            "description": "Enterprise account not found"
+          }
+        }
+      }
+    },
+    "/admin/verify/{username}": {
+      "patch": {
+        "summary": "Verify a user and assign a role",
+        "description": "Verify a user by username and assign a role to them.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Username of the user to verify."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "role": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User verified and role assigned"
+          },
+          "400": {
+            "description": "User already has the provided role"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/admin/deactivate/{username}": {
+      "patch": {
+        "summary": "Deactivate an account",
+        "description": "Deactivate an account by username.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Username of the account to deactivate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account deactivated successfully"
+          },
+          "404": {
+            "description": "Account not found"
+          }
+        }
+      }
+    },
+    "/admin/activate/{username}": {
+      "patch": {
+        "summary": "Activate an account",
+        "description": "Activate an account by username.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Username of the account to activate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account activated successfully"
+          },
+          "404": {
+            "description": "Account not found"
+          }
+        }
+      }
+    },
+    "/posts": {
+      "get": {
+        "tags": ["Post"],
+        "summary": "Get all posts",
+        "description": "Retrieve a list of all posts.",
+        "responses": {
+          "200": {
+            "description": "A list of posts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Post"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Post"],
+        "summary": "Create a new post",
+        "description": "Create a new post with the provided details.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Post created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - User not verified"
+          }
+        }
+      }
+    },
+    "/posts/{postId}": {
+      "get": {
+        "tags": ["Post"],
+        "summary": "Get a post by ID",
+        "description": "Retrieve a post by its ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "ID of the post to retrieve."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Post"],
+        "summary": "Update a post",
+        "description": "Update a post with the provided details.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "ID of the post to update."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Post"],
+        "summary": "Delete a post",
+        "description": "Delete a post by its ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "ID of the post to delete."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Post deleted successfully"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Post": {
+        "type": "object",
+        "properties": {}
+      },
+      "PostInput": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "postTitle": {
+            "type": "string"
+          },
+          "budget": {
+            "type": "number"
+          },
+          "jobTitle": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "string"
+          },
+          "participants": {
+            "type": "string"
+          },
+          "experience": {
+            "type": "string"
+          },
+          "expireDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["content", "postTitle", "expireDate"]
       }
     }
   }
