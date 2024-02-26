@@ -29,13 +29,38 @@ router.get(
   restrictTo('admin'),
   adminController.getEnterpriseAccountList
 );
-router.get(
-  '/enterprise/:username',
+router
+  .route('/enterprise/:username')
+  .get(
+    protectRoute,
+    restrictTo('admin'),
+    adminController.getEnterpriseAccountDetail
+  )
+  .patch(
+    protectRoute,
+    restrictTo('admin'),
+    adminController.updateEnterpriseInfo
+  );
+
+router.patch(
+  '/verify/:username',
   protectRoute,
   restrictTo('admin'),
-  adminController.getEnterpriseAccountDetail
+  adminController.verifyUserAndAddRole
 );
 
-router;
+router.patch(
+  '/deactivate/:username',
+  protectRoute,
+  restrictTo('admin'),
+  adminController.deactivateAccount
+);
+
+router.patch(
+  '/activate/:username',
+  protectRoute,
+  restrictTo('admin'),
+  adminController.activateAccount
+);
 
 export default router;
