@@ -19,7 +19,7 @@ class PostController {
         expireDate
       } = req.body;
 
-      if (!req.user || !req.user.verified) {
+      if (!req.userInfo || !req.userInfo.verified) {
         return next(
           new AppError(
             'You are not verified. Please login or request verification from admin.',
@@ -28,7 +28,7 @@ class PostController {
         );
       }
 
-      const accountId = req.user!.accountId;
+      const accountId = req.userInfo!.accountId;
       const newPost = await Post.create({
         content,
         postTitle,

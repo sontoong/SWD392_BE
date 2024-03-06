@@ -7,8 +7,9 @@ import hpp from 'hpp';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
-
-import * as swaggerDocument from '../swagger.json';
+import passport from './controllers/passport';
+import session from 'express-session';
+import specs from './utils/swaggerConfig';
 
 import AppError from './utils/appError';
 import globalErrorHandler from './utils/globalErrorHandler';
@@ -28,16 +29,8 @@ const app = express();
 // Body parser, reading data from body into req.body
 app.use(bodyParser.json());
 
-// serve swagger
-const options = {
-  explorer: true
-};
-
-app.use(
-  '/api-docs',
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerDocument, options)
-);
+// swagger configuration
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 // set security HTTP headers
 app.use(helmet());
@@ -83,6 +76,8 @@ app.use(
 // enable CORS for all requests
 var corsOptions = {
   origin: `http://localhost:${process.env.PORT}`,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
@@ -91,13 +86,26 @@ app.use(cors(corsOptions));
 // middleware to serve static files
 app.use(express.static(`${__dirname}/public`));
 
+// passport middleware
+// session
+app.use(
+  session({
+    secret: `${process.env.SESSION_SECRET}`,
+    resave: false,
+    saveUninitialized: false
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 // 2) ROUTES
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/admin', adminRouter);
-app.use('/api/v1/candidate', candidateRouter);
-app.use('/api/v1/enterprise', enterpriseRouter);
-app.use('/api/v1/post', postRouter);
-app.use('/api/v1/tag', tagRouter);
+app.use('/api/v1/candidates', candidateRouter);
+app.use('/api/v1/enterprises', enterpriseRouter);
+app.use('/api/v1/posts', postRouter);
+app.use('/api/v1/tags', tagRouter);
 
 // 3) ERROR HANDLING
 app.all('*', (req, res, next) => {

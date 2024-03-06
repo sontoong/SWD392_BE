@@ -70,17 +70,17 @@ class AuthController {
 
   public login = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const { username, password } = req.body;
+      const { email, password } = req.body;
       // Check if username and password inputted
-      if (!username || !password) {
-        return next(new AppError('Please provide username and password!', 400));
+      if (!email || !password) {
+        return next(new AppError('Please provide email and password!', 400));
       }
       // Check if user exists and password is correct
 
-      const user = await Account.findOne({ where: { username } });
+      const user = await Account.findOne({ where: { email } });
 
       if (!user || !(await user.verifyPassword(password, user.password!))) {
-        return next(new AppError('Incorrect username or password!', 401));
+        return next(new AppError('Incorrect email or password!', 401));
       }
 
       this.createSendToken(user, 200, res);
@@ -93,6 +93,13 @@ class AuthController {
     });
     res.status(200).json({ status: 'success' });
   };
+
+  public currentUser = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const user = req.user as Account;
+      this.createSendToken(user, 200, res);
+    }
+  );
 }
 
 export default new AuthController();

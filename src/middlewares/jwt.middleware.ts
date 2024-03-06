@@ -8,7 +8,7 @@ import { filterObject } from '~/utils/filterObject';
 declare global {
   namespace Express {
     interface Request {
-      user?: AccountAttributes;
+      userInfo?: AccountAttributes;
     }
   }
 }
@@ -76,7 +76,7 @@ export const restrictTo = (...roles: string[]) =>
     // Roles is an array ['admin', 'staff', 'customer']
     // req.user.role is 'user' passed from protectRoute middleware
     // Since protectRoute middleware is called before this middleware
-    const currentUser = await Account.findByPk(req.user!.accountId);
+    const currentUser = await Account.findByPk(req.userInfo!.accountId);
     if (!currentUser || !roles.includes(currentUser.role)) {
       return next(
         new AppError('You do not have permission to perform this action!', 403)
