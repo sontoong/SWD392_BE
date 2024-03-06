@@ -28,6 +28,12 @@ class Account extends Model<AccountAttributes> {
   declare accountId: number;
 
   @Column({
+    type: DataType.STRING(100),
+    allowNull: true
+  })
+  declare googleId: string | null;
+
+  @Column({
     type: DataType.STRING(255),
     allowNull: false,
     unique: true
@@ -44,13 +50,15 @@ class Account extends Model<AccountAttributes> {
   @Column({
     type: DataType.STRING(100),
     allowNull: false,
-    unique: true
+    unique: true,
+    defaultValue: 'N/A'
   })
   declare phone: string;
 
   @Column({
     type: DataType.STRING(100),
-    allowNull: false
+    allowNull: false,
+    defaultValue: 'N/A'
   })
   declare password: string;
 
@@ -78,7 +86,8 @@ class Account extends Model<AccountAttributes> {
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true
+    allowNull: true,
+    defaultValue: false
   })
   declare verified: boolean | null;
 

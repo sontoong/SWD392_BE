@@ -1,6 +1,7 @@
 // Account interface
 interface AccountAttributes {
   accountId?: number;
+  googleId?: string | null;
   username: string;
   email: string;
   phone: string;
