@@ -56,7 +56,7 @@ router.post('/signup', authController.signup);
  *           schema:
  *             type: object
  *             properties:
- *               username:
+ *               email:
  *                 type: string
  *               password:
  *                 type: string

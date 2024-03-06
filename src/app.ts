@@ -102,10 +102,10 @@ app.use(passport.session());
 // 2) ROUTES
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/admin', adminRouter);
-app.use('/api/v1/candidate', candidateRouter);
-app.use('/api/v1/enterprise', enterpriseRouter);
-app.use('/api/v1/post', postRouter);
-app.use('/api/v1/tag', tagRouter);
+app.use('/api/v1/candidates', candidateRouter);
+app.use('/api/v1/enterprises', enterpriseRouter);
+app.use('/api/v1/posts', postRouter);
+app.use('/api/v1/tags', tagRouter);
 
 // 3) ERROR HANDLING
 app.all('*', (req, res, next) => {
