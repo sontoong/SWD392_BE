@@ -12,6 +12,8 @@ interface AccountAttributes {
   active?: boolean | null;
   createdAt?: Date;
   updatedAt?: Date;
+  passwordResetToken?: string | null;
+  passwordResetExpires?: number | null;
 }
 
 // Application interface
@@ -95,6 +97,12 @@ interface TagAttributes {
   tagName: string;
   tagDescription?: string | null;
   popularity?: number;
+}
+
+interface SendEmailOptions {
+  email: string;
+  subject: string;
+  message: string;
 }
 
 module.exports = AccountAttributes;

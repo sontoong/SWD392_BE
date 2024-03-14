@@ -11,6 +11,7 @@ import {
   Default
 } from 'sequelize-typescript';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
 import CandidateInfo from './candidateInfo.model';
 import EnterpriseInfo from './enterpriseInfo.model';
@@ -98,6 +99,18 @@ class Account extends Model<AccountAttributes> {
   })
   declare active: boolean | null;
 
+  @Column({
+    type: DataType.STRING(255),
+    allowNull: true
+  })
+  declare passwordResetToken: string | null;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true
+  })
+  declare passwordResetExpires: number | null;
+
   @CreatedAt
   declare created_at: Date;
 
@@ -116,6 +129,17 @@ class Account extends Model<AccountAttributes> {
     userPassword: string
   ): Promise<boolean> {
     return await bcrypt.compare(candidatePassword, userPassword);
+  }
+
+  // reset password token
+  async createPasswordResetToken() {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    this.passwordResetToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+    return resetToken;
   }
 }
 

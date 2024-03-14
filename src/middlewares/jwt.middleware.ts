@@ -66,7 +66,7 @@ export const protectRoute = catchAsync(
 
     // Grant access to the protected route
     const filteredUser = filterObject(currentUser, allowedFields);
-    req.user = filteredUser as AccountAttributes;
+    req.userInfo = filteredUser as AccountAttributes;
     next();
   }
 );

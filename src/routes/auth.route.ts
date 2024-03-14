@@ -120,4 +120,10 @@ router.get(
   authController.currentUser
 );
 
+router.post('/forgot-password', authController.forgotPassword);
+
+router.patch('/reset-password/:token', authController.resetPassword);
+
+router.patch('/change-password', protectRoute, authController.changePassword);
+
 export default router;
