@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize-typescript';
-import { dbConfig } from '~/utils/dbConfig';
+import { dbConfig } from '~/configs/dbConfig';
 
 export default function connectDB() {
   console.log('dbConfig:', dbConfig);

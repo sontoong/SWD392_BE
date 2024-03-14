@@ -9,7 +9,7 @@ import {
 import multer from 'multer';
 import AppError from '~/utils/appError';
 import catchAsync from '~/utils/catchAsync';
-import firebaseConfig from '~/utils/firebaseConfig';
+import firebaseConfig from '~/configs/firebaseConfig';
 
 let isWrongFileType: boolean = false;
 

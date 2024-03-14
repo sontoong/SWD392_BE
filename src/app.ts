@@ -9,7 +9,7 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import passport from './controllers/passport';
 import session from 'express-session';
-import specs from './utils/swaggerConfig';
+import specs from './configs/swaggerConfig';
 
 import AppError from './utils/appError';
 import globalErrorHandler from './utils/globalErrorHandler';
