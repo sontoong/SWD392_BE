@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import catchAsync from '../utils/catchAsync';
 import Post from '../database/models/post.model';
-import Account from '../database/models/account.model';
-import PostTag from '../database/models/postTag.model';
 import AppError from '~/utils/appError';
 
 class PostController {
@@ -33,7 +31,7 @@ class PostController {
         content,
         postTitle,
         budget,
-        jobTitle,
+        // jobTitle,
         duration,
         participants,
         experience,
@@ -77,7 +75,7 @@ class PostController {
         content,
         postTitle,
         budget,
-        jobTitle,
+        // jobTitle,
         duration,
         participants,
         experience,
@@ -88,7 +86,7 @@ class PostController {
           content,
           postTitle,
           budget,
-          jobTitle,
+          // jobTitle,
           duration,
           participants,
           experience,

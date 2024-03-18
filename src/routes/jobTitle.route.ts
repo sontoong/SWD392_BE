@@ -1,14 +1,14 @@
 import express from 'express';
-import tagController from '~/controllers/tag.controller';
+import jobTitleController from '~/controllers/jobTitle.controller';
 import { protectRoute, restrictTo } from '~/middlewares/jwt.middleware';
 const router = express.Router();
 
 /**
  * @swagger
- * /tags:
+ * /job-titles:
  *   get:
- *     summary: Get all tags
- *     tags: [Tags]
+ *     summary: Get all jobTitles
+ *     jobTitles: [JobTitles]
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -25,12 +25,12 @@ const router = express.Router();
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Tag'
+ *                     $ref: '#/components/schemas/JobTitle'
  *       '401':
  *         description: Unauthorized, authentication failed
  *   post:
- *     summary: Create a new tag
- *     tags: [Tags]
+ *     summary: Create a new jobTitle
+ *     jobTitles: [JobTitles]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -38,26 +38,26 @@ const router = express.Router();
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Tag'
+ *             $ref: '#/components/schemas/JobTitle'
  *     responses:
  *       '201':
- *         description: Tag created successfully
+ *         description: JobTitle created successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Tag'
+ *               $ref: '#/components/schemas/JobTitle'
  *       '401':
  *         description: Unauthorized, authentication failed
  *
- * /tags/search/{tagName}:
+ * /job-titles/search/{jobTitleName}:
  *   get:
- *     summary: Search for tags by name
- *     tags: [Tags]
+ *     summary: Search for jobTitles by name
+ *     jobTitles: [JobTitles]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: tagName
+ *         name: jobTitleName
  *         required: true
  *         schema:
  *           type: string
@@ -75,16 +75,16 @@ const router = express.Router();
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Tag'
+ *                     $ref: '#/components/schemas/JobTitle'
  *       '401':
  *         description: Unauthorized, authentication failed
  *       '404':
- *         description: Tag not found
+ *         description: JobTitle not found
  *
- * /tags/popular:
+ * /job-titles/popular:
  *   get:
- *     summary: Get most popular tags
- *     tags: [Tags]
+ *     summary: Get most popular jobTitles
+ *     jobTitles: [JobTitles]
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -101,15 +101,23 @@ const router = express.Router();
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Tag'
+ *                     $ref: '#/components/schemas/JobTitle'
  *       '401':
  *         description: Unauthorized, authentication failed
  */
 router
   .route('/')
-  .get(protectRoute, tagController.getAllTags)
-  .post(protectRoute, tagController.createTag);
-router.get('/search/:tagName', protectRoute, tagController.getTagByName);
-router.get('/popular', protectRoute, tagController.getMostPopularTags);
+  .get(protectRoute, jobTitleController.getAllJobTitles)
+  .post(protectRoute, jobTitleController.createJobTitle);
+router.get(
+  '/search/:jobTitleName',
+  protectRoute,
+  jobTitleController.getJobTitleByName
+);
+router.get(
+  '/popular',
+  protectRoute,
+  jobTitleController.getMostPopularJobTitles
+);
 
 export default router;

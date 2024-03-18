@@ -53,7 +53,8 @@ class AuthController {
 
   public signup = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const { username, email, password, phone, passwordConfirm } = req.body;
+      const { username, email, password, phone, passwordConfirm, role } =
+        req.body;
 
       if (password !== passwordConfirm) {
         return next(new AppError('Passwords do not match!', 400));
@@ -64,7 +65,7 @@ class AuthController {
         email: email,
         password: password,
         phone: phone,
-        role: 'user'
+        role: role
       });
       this.createSendToken(newUser, 201, res);
     }

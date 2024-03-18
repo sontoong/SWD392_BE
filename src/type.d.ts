@@ -29,6 +29,11 @@ interface ApplicationAttributes {
   updatedAt?: Date;
 }
 
+interface LanguageAttributes {
+  languageId?: number;
+  name: string;
+}
+
 // CandidateInfo interface
 interface CandidateInfoAttributes {
   accountId?: number;
@@ -38,11 +43,10 @@ interface CandidateInfoAttributes {
   nationality: string;
   experience?: 'junior' | 'middle' | 'senior' | 'expert';
   specialty?: string;
-  jobTitle: string;
   dob: Date;
   profileDescription: string;
   subscription?: string;
-  tagId?: number;
+  jobTitleId?: number;
 }
 
 // Contract interface
@@ -76,12 +80,11 @@ interface PaymentAttributes {
 // Post interface
 interface PostAttributes {
   postId?: number;
-  tagId?: number;
+  jobTitleId?: number;
   enterpriseId: number;
   content: string;
   postTitle: string;
   budget: number;
-  jobTitle: string;
   duration?: number | null;
   participants?: number | null;
   experience: 'junior' | 'middle' | 'senior' | 'expert';
@@ -91,12 +94,19 @@ interface PostAttributes {
   updatedAt?: Date;
 }
 
-// Tag interface
-interface TagAttributes {
-  tagId?: number;
-  tagName: string;
-  tagDescription?: string | null;
+// jobTitle interface
+interface JobTitleAttributes {
+  jobTitleId?: number;
+  jobTitleName: string;
+  jobTitleDescription?: string | null;
   popularity?: number;
+}
+
+interface SkillAttributes {
+  skillId?: number;
+  skillName: string;
+  // skillDescription?: string;
+  // popularity?: number;
 }
 
 interface SendEmailOptions {
@@ -113,4 +123,4 @@ module.exports = EnterpriseInfoAttributes;
 module.exports = NotificationAttributes;
 module.exports = PaymentAttributes;
 module.exports = PostAttributes;
-module.exports = TagAttributes;
+module.exports = JobTitleAttributes;

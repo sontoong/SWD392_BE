@@ -6,22 +6,24 @@ import {
   BelongsToMany
 } from 'sequelize-typescript';
 import Post from './post.model';
-import PostTag from './postTag.model';
+import PostJobTitle from './postJobTitle.model';
+import Skill from './skill.model';
+import JobTitleSkill from './jobTitleSkill.model';
 
 @Table({
   timestamps: false,
-  tableName: 'tag',
-  modelName: 'Tag'
+  tableName: 'job_titles',
+  modelName: 'JobTitle'
 })
-class Tag extends Model<TagAttributes> {
+class JobTitle extends Model<JobTitleAttributes> {
   @Column({
     primaryKey: true,
     autoIncrement: true
   })
-  tagId!: number;
+  jobTitleId!: number;
 
   // Define Many-to-Many relationship with Post model
-  @BelongsToMany(() => Post, () => PostTag)
+  @BelongsToMany(() => Post, () => PostJobTitle)
   posts!: Post[];
 
   @Column({
@@ -29,13 +31,13 @@ class Tag extends Model<TagAttributes> {
     allowNull: false,
     unique: true
   })
-  tagName!: string;
+  jobTitleName!: string;
 
   @Column({
     type: DataType.TEXT,
     allowNull: true
   })
-  tagDescription!: string | null;
+  jobTitleDescription!: string | null;
 
   @Column({
     type: DataType.INTEGER,
@@ -47,6 +49,9 @@ class Tag extends Model<TagAttributes> {
     }
   })
   popularity?: number;
+
+  @BelongsToMany(() => Skill, () => JobTitleSkill)
+  skills!: Skill[];
 }
 
-export default Tag;
+export default JobTitle;
