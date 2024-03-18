@@ -19,7 +19,7 @@ import candidateRouter from './routes/candidate.route';
 import enterpriseRouter from './routes/enterprise.route';
 import authRouter from './routes/auth.route';
 import postRouter from './routes/post.route';
-import tagRouter from './routes/tag.route';
+import jobTitleRouter from './routes/jobTitle.route';
 
 import morgan from 'morgan';
 const app = express();
@@ -105,7 +105,7 @@ app.use('/api/v1/admin', adminRouter);
 app.use('/api/v1/candidates', candidateRouter);
 app.use('/api/v1/enterprises', enterpriseRouter);
 app.use('/api/v1/posts', postRouter);
-app.use('/api/v1/tags', tagRouter);
+app.use('/api/v1/job-titles', jobTitleRouter);
 
 // 3) ERROR HANDLING
 app.all('*', (req, res, next) => {

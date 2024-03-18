@@ -5,12 +5,12 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
-  BelongsToMany
+  HasMany
 } from 'sequelize-typescript';
-import Tag from './tag.model';
-import PostTag from './postTag.model';
+import PostJobTitle from './postJobTitle.model';
 import Account from './account.model';
 import AppError from '~/utils/appError';
+import JobTitle from './jobTitle.model';
 
 // const experienceOptions = ['junior', 'middle', 'senior', 'expert'];
 
@@ -55,12 +55,6 @@ class Post extends Model<PostAttributes> {
   budget!: number;
 
   @Column({
-    allowNull: false,
-    type: DataType.STRING
-  })
-  jobTitle!: string;
-
-  @Column({
     type: DataType.INTEGER,
     allowNull: true
   })
@@ -96,8 +90,8 @@ class Post extends Model<PostAttributes> {
   })
   updatedAt!: Date;
 
-  @BelongsToMany(() => Tag, () => PostTag)
-  tags!: Tag[];
+  @HasMany(() => PostJobTitle)
+  jobTitles!: JobTitle[];
 
   //   validateExperience() {
   //     for (const exp of this.experience) {

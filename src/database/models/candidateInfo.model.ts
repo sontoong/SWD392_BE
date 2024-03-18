@@ -5,11 +5,14 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
-  AutoIncrement
+  AutoIncrement,
+  HasMany
 } from 'sequelize-typescript';
 
 import Account from './account.model';
-import Tag from './tag.model';
+import JobTitle from './jobTitle.model';
+import Language from './language.model';
+import CandidateLanguage from './candidateLanguage.model';
 
 @Table({
   timestamps: false,
@@ -66,12 +69,6 @@ class CandidateInfo extends Model<CandidateInfoAttributes> {
   declare specialty: string;
 
   @Column({
-    type: DataType.STRING,
-    allowNull: false
-  })
-  declare jobTitle: string;
-
-  @Column({
     type: DataType.DATE,
     allowNull: false
   })
@@ -89,15 +86,18 @@ class CandidateInfo extends Model<CandidateInfoAttributes> {
   })
   declare subscription: string;
 
-  @ForeignKey(() => Tag)
+  @HasMany(() => CandidateLanguage)
+  languages!: CandidateLanguage[];
+
+  @ForeignKey(() => JobTitle)
   @Column({
     type: DataType.INTEGER,
     allowNull: true
   })
-  declare tagId: number;
+  declare jobTitleId: number;
 
-  @BelongsTo(() => Tag, { foreignKey: 'tagId' })
-  tag!: Tag;
+  // @BelongsTo(() => JobTitle, { foreignKey: 'jobTitleId' })
+  // jobTitle!: JobTitle;
 }
 
 export default CandidateInfo;
