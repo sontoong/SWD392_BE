@@ -1,24 +1,24 @@
 import { Table, Column, Model, ForeignKey } from 'sequelize-typescript';
 import Post from './post.model';
-import Tag from './tag.model';
+import JobTitle from './jobTitle.model';
 
 @Table({
   timestamps: false,
-  tableName: 'post_tag', // Name of the intermediate table
-  modelName: 'PostTag'
+  tableName: 'post_job_titles', // Name of the intermediate table
+  modelName: 'PostJobTitle'
 })
-class PostTag extends Model {
+class PostJobTitle extends Model {
   @ForeignKey(() => Post)
   @Column({
     allowNull: false
   })
   postId!: number;
 
-  @ForeignKey(() => Tag)
+  @ForeignKey(() => JobTitle)
   @Column({
     allowNull: false
   })
-  tagId!: number;
+  jobTitleId!: number;
 }
 
-export default PostTag;
+export default PostJobTitle;

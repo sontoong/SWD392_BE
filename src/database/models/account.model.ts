@@ -11,6 +11,7 @@ import {
   Default
 } from 'sequelize-typescript';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
 import CandidateInfo from './candidateInfo.model';
 import EnterpriseInfo from './enterpriseInfo.model';
@@ -72,17 +73,24 @@ class Account extends Model<AccountAttributes> {
   }
 
   @Column({
-    type: DataType.ENUM('enterprise', 'candidate', 'user', 'admin'),
+    type: DataType.ENUM('enterprise', 'candidate', 'admin'),
     allowNull: false,
-    defaultValue: 'user'
+    defaultValue: 'candidate'
   })
-  declare role: 'enterprise' | 'candidate' | 'user' | 'admin';
+  declare role: 'enterprise' | 'candidate' | 'admin';
 
   @Column({
     type: DataType.STRING(255),
     defaultValue: 'default.jpg'
   })
   declare image: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+    defaultValue: 0
+  })
+  declare wallet: number;
 
   @Column({
     type: DataType.BOOLEAN,
@@ -98,11 +106,17 @@ class Account extends Model<AccountAttributes> {
   })
   declare active: boolean | null;
 
-  @CreatedAt
-  declare created_at: Date;
+  @Column({
+    type: DataType.STRING(255),
+    allowNull: true
+  })
+  declare passwordResetToken: string | null;
 
-  @UpdatedAt
-  declare updated_at: Date;
+  @Column({
+    type: DataType.DATE,
+    allowNull: true
+  })
+  declare passwordResetExpires: number | null;
 
   @HasOne(() => CandidateInfo)
   candidateInfo!: CandidateInfo;
@@ -116,6 +130,17 @@ class Account extends Model<AccountAttributes> {
     userPassword: string
   ): Promise<boolean> {
     return await bcrypt.compare(candidatePassword, userPassword);
+  }
+
+  // reset password token
+  async createPasswordResetToken() {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    this.passwordResetToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+    return resetToken;
   }
 }
 

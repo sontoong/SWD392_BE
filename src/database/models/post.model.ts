@@ -5,12 +5,12 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
-  BelongsToMany
+  HasMany
 } from 'sequelize-typescript';
-import Tag from './tag.model';
-import PostTag from './postTag.model';
+import PostJobTitle from './postJobTitle.model';
 import Account from './account.model';
 import AppError from '~/utils/appError';
+import JobTitle from './jobTitle.model';
 
 // const experienceOptions = ['junior', 'middle', 'senior', 'expert'];
 
@@ -50,15 +50,27 @@ class Post extends Model<PostAttributes> {
 
   @Column({
     allowNull: false,
-    type: DataType.INTEGER
+    type: DataType.STRING
   })
-  budget!: number;
+  language!: string;
 
   @Column({
     allowNull: false,
     type: DataType.STRING
   })
-  jobTitle!: string;
+  address!: string;
+
+  @Column({
+    allowNull: false,
+    type: DataType.ENUM('hourly', 'project')
+  })
+  budgetType!: 'hourly' | 'project';
+
+  @Column({
+    allowNull: true,
+    type: DataType.INTEGER
+  })
+  budget?: number;
 
   @Column({
     type: DataType.INTEGER,
@@ -67,16 +79,46 @@ class Post extends Model<PostAttributes> {
   duration!: number | null;
 
   @Column({
+    allowNull: false,
+    type: DataType.ENUM('long-term', 'short-term')
+  })
+  durationType!: 'long-term' | 'short-term';
+
+  @Column({
+    allowNull: false,
+    type: DataType.ENUM('public', 'private', 'freelancer')
+  })
+  privacy!: 'public' | 'private' | 'freelancer';
+
+  @Column({
     type: DataType.INTEGER,
     allowNull: true
   })
   participants!: number | null;
 
   @Column({
-    allowNull: false,
+    allowNull: true,
     type: DataType.ENUM('junior', 'middle', 'senior', 'expert')
   })
   experience!: 'junior' | 'middle' | 'senior' | 'expert';
+
+  @Column({
+    allowNull: true,
+    type: DataType.ENUM('all', 'more than 3', 'more than 4')
+  })
+  ratingRequired?: 'all' | 'more than 3' | 'more than 4';
+
+  // @Column({
+  //   type: DataType.ARRAY(DataType.STRING),
+  //   allowNull: true
+  // })
+  // skillRequired?: string[];
+
+  // @Column({
+  //   type: DataType.ARRAY(DataType.STRING),
+  //   allowNull: true
+  // })
+  // questions?: string[];
 
   @Column({
     type: DataType.DATE,
@@ -96,8 +138,8 @@ class Post extends Model<PostAttributes> {
   })
   updatedAt!: Date;
 
-  @BelongsToMany(() => Tag, () => PostTag)
-  tags!: Tag[];
+  @HasMany(() => PostJobTitle)
+  jobTitles!: JobTitle[];
 
   //   validateExperience() {
   //     for (const exp of this.experience) {
