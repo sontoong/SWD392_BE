@@ -11,6 +11,7 @@ import catchAsync from '../utils/catchAsync';
 import AppError from '~/utils/appError';
 import { filterObject } from '~/utils/filterObject';
 import sendEmail from '~/utils/sendEmail';
+import { ALLOWED_ACCOUNT_FIELDS } from '~/utils/constant';
 
 class AuthController {
   private signToken = (id: string) => {
@@ -39,7 +40,7 @@ class AuthController {
     res.cookie('jwt', token, cookieOptions);
 
     // Remove fields that are not allowed to be sent to client
-    const allowedFields = ['username', 'email', 'image', 'role', 'phone'];
+    const allowedFields = ALLOWED_ACCOUNT_FIELDS;
     const userResponse = filterObject(user, allowedFields);
 
     res.status(statusCode).json({

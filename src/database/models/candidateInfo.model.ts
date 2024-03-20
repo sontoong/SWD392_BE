@@ -6,6 +6,7 @@ import {
   ForeignKey,
   BelongsTo,
   AutoIncrement,
+  BelongsToMany,
   HasMany
 } from 'sequelize-typescript';
 
@@ -69,6 +70,12 @@ class CandidateInfo extends Model<CandidateInfoAttributes> {
   declare specialty: string;
 
   @Column({
+    type: DataType.INTEGER,
+    allowNull: true
+  })
+  declare hourlyRate: number;
+
+  @Column({
     type: DataType.DATE,
     allowNull: false
   })
@@ -86,8 +93,11 @@ class CandidateInfo extends Model<CandidateInfoAttributes> {
   })
   declare subscription: string;
 
-  @HasMany(() => CandidateLanguage)
-  languages!: CandidateLanguage[];
+  // @HasMany(() => CandidateLanguage)
+  // languages!: CandidateLanguage[];
+
+  @BelongsToMany(() => Language, () => CandidateLanguage)
+  languages!: Language[];
 
   @ForeignKey(() => JobTitle)
   @Column({
@@ -96,8 +106,8 @@ class CandidateInfo extends Model<CandidateInfoAttributes> {
   })
   declare jobTitleId: number;
 
-  // @BelongsTo(() => JobTitle, { foreignKey: 'jobTitleId' })
-  // jobTitle!: JobTitle;
+  @BelongsTo(() => JobTitle, { foreignKey: 'jobTitleId' })
+  jobTitle!: JobTitle;
 }
 
 export default CandidateInfo;

@@ -32,7 +32,7 @@ export default function connectDB() {
 
   // Synchronize models with the database
   sequelize
-    .sync({ force: false, alter: true })
+    .sync({ force: true, alter: true })
     .then(() => {
       console.log('Database tables synchronized');
     })

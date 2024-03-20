@@ -4,6 +4,7 @@ import AppError from '~/utils/appError';
 import jwt from 'jsonwebtoken';
 import Account from '~/database/models/account.model';
 import { filterObject } from '~/utils/filterObject';
+import { ALLOWED_JWT_FIELDS } from '~/utils/constant';
 
 declare global {
   namespace Express {
@@ -13,14 +14,7 @@ declare global {
   }
 }
 
-const allowedFields = [
-  'username',
-  'email',
-  'image',
-  'role',
-  'phone',
-  'accountId'
-];
+const allowedFields = ALLOWED_JWT_FIELDS;
 
 export const protectRoute = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {

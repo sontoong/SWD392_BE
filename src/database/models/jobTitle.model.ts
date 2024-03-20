@@ -3,12 +3,15 @@ import {
   Column,
   Model,
   DataType,
-  BelongsToMany
+  BelongsToMany,
+  BelongsTo,
+  ForeignKey
 } from 'sequelize-typescript';
 import Post from './post.model';
 import PostJobTitle from './postJobTitle.model';
 import Skill from './skill.model';
 import JobTitleSkill from './jobTitleSkill.model';
+import CandidateInfo from './candidateInfo.model';
 
 @Table({
   timestamps: false,
@@ -49,6 +52,12 @@ class JobTitle extends Model<JobTitleAttributes> {
     }
   })
   popularity?: number;
+
+  @ForeignKey(() => CandidateInfo)
+  candidateInfoId!: number;
+
+  @BelongsTo(() => CandidateInfo)
+  candidateInfo!: CandidateInfo;
 
   @BelongsToMany(() => Skill, () => JobTitleSkill)
   skills!: Skill[];

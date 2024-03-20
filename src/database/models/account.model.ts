@@ -73,17 +73,24 @@ class Account extends Model<AccountAttributes> {
   }
 
   @Column({
-    type: DataType.ENUM('enterprise', 'candidate', 'user', 'admin'),
+    type: DataType.ENUM('enterprise', 'candidate', 'admin'),
     allowNull: false,
-    defaultValue: 'user'
+    defaultValue: 'candidate'
   })
-  declare role: 'enterprise' | 'candidate' | 'user' | 'admin';
+  declare role: 'enterprise' | 'candidate' | 'admin';
 
   @Column({
     type: DataType.STRING(255),
     defaultValue: 'default.jpg'
   })
   declare image: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+    defaultValue: 0
+  })
+  declare wallet: number;
 
   @Column({
     type: DataType.BOOLEAN,
@@ -110,12 +117,6 @@ class Account extends Model<AccountAttributes> {
     allowNull: true
   })
   declare passwordResetExpires: number | null;
-
-  @CreatedAt
-  declare created_at: Date;
-
-  @UpdatedAt
-  declare updated_at: Date;
 
   @HasOne(() => CandidateInfo)
   candidateInfo!: CandidateInfo;
