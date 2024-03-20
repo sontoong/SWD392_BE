@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import catchAsync from '../utils/catchAsync';
 import Post from '../database/models/post.model';
 import AppError from '~/utils/appError';
+import { LIMIT_PAGE, OFFSET } from '~/utils/constant';
 
 class PostController {
   public createPost = catchAsync(
@@ -9,12 +10,21 @@ class PostController {
       const {
         content,
         postTitle,
+        language,
+        address,
+        budgetType,
         budget,
         jobTitle,
         duration,
+        durationType,
+        privacy,
+        contract,
         participants,
         experience,
-        expireDate
+        ratingRequired
+        // skillRequired,
+        // questions
+        // expireDate
       } = req.body;
 
       if (!req.userInfo || !req.userInfo.verified) {
@@ -30,14 +40,23 @@ class PostController {
       const newPost = await Post.create({
         content,
         postTitle,
+        language,
+        address,
+        budgetType,
         budget,
         // jobTitle,
         duration,
+        durationType,
+        privacy,
+        contract,
         participants,
         experience,
-        expireDate,
+        ratingRequired,
+        // skillRequired,
+        // questions,
         enterpriseId: accountId!
       });
+
       res.status(201).json({
         status: 'success',
         data: newPost
@@ -47,7 +66,17 @@ class PostController {
 
   public getAllPosts = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const posts = await Post.findAll();
+      const sortBy = req.body.sortBy || 'createdAt';
+      const limit = req.body.limit || LIMIT_PAGE;
+      // let offset = 0 || OFFSET;
+      const offset = req.body.page ? 0 + (req.body.page - 1) * limit : OFFSET;
+      // const { jobTitle, budgetType, duration } = req.body;
+      const posts = await Post.findAll({
+        where: { privacy: 'public' },
+        order: [[sortBy, 'DESC']],
+        limit,
+        offset
+      });
       res.status(200).json({
         status: 'success',
         data: posts
@@ -74,23 +103,37 @@ class PostController {
       const {
         content,
         postTitle,
+        language,
+        address,
+        budgetType,
         budget,
-        // jobTitle,
         duration,
+        durationType,
+        privacy,
+        contract,
         participants,
         experience,
-        expireDate
+        ratingRequired
+        // skillRequired,
+        // questions
       } = req.body;
       const [updated] = await Post.update(
         {
           content,
           postTitle,
+          language,
+          address,
+          budgetType,
           budget,
-          // jobTitle,
           duration,
+          durationType,
+          privacy,
+          contract,
           participants,
           experience,
-          expireDate
+          ratingRequired
+          // skillRequired,
+          // questions
         },
         { where: { postId } }
       );

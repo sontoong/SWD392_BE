@@ -6,8 +6,9 @@ interface AccountAttributes {
   email: string;
   phone: string;
   password: string;
-  role: 'enterprise' | 'candidate' | 'user' | 'admin';
+  role: 'enterprise' | 'candidate' | 'admin';
   image?: string;
+  wallet?: number;
   verified?: boolean | null;
   active?: boolean | null;
   createdAt?: Date;
@@ -55,12 +56,27 @@ interface ContractAttributes {
 }
 
 // EnterpriseInfo interface
+// EnterpriseInfo interface
 interface EnterpriseInfoAttributes {
   accountId?: number;
+  enterpriseName: string;
+  dob: Date;
+  enterpriseNation: string;
+  enterpriseVerificationDocuments?: Buffer;
+  enterpriseVerificationType?: string;
+  enterpriseVerificationNumber?: string;
   companyName: string;
-  contact: string;
-  verificationDocuments?: Buffer;
-  address: string;
+  companySize: number;
+  companyWebAddress?: string;
+  companyVideoAddress?: string;
+  companyDescription?: string;
+  companyVerificationDocuments?: Buffer;
+  companyVerificationNumber?: string;
+  companyTaxCode?: string;
+  companyNation: string;
+  companyAddress: string;
+  companyEmail: string;
+  companyPhone: string;
 }
 
 // Notification interface
@@ -80,18 +96,37 @@ interface PaymentAttributes {
 // Post interface
 interface PostAttributes {
   postId?: number;
-  jobTitleId?: number;
+  // jobTitleId?: number;
   enterpriseId: number;
   content: string;
   postTitle: string;
-  budget: number;
+  language: string;
+  jobTitle?: string;
+  address: string;
+  contract: string;
+  budgetType: 'hourly' | 'project';
+  budget?: number;
   duration?: number | null;
+  durationType: 'long-term' | 'short-term';
+  privacy: 'public' | 'private' | 'freelancer';
   participants?: number | null;
-  experience: 'junior' | 'middle' | 'senior' | 'expert';
+  ratingRequired?: 'all' | 'more than 3' | 'more than 4';
+  // skillRequired?: Array<string>;
+  // questions?: Array<string>;
+  experience?: 'junior' | 'middle' | 'senior' | 'expert';
   // experience: string[];
   expireDate?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+interface PaymentAttributes {
+  paymentId?: number;
+  createAt?: Date;
+  paymentMethod: string;
+  amount: number;
+  candidateId: number;
+  enterpriseId: number;
 }
 
 // jobTitle interface
@@ -107,6 +142,19 @@ interface SkillAttributes {
   skillName: string;
   // skillDescription?: string;
   // popularity?: number;
+}
+
+interface RatingAttributes {
+  ratingId?: number;
+  quality: float;
+  price: float;
+  time: float;
+  responsibility: float;
+  communication: float;
+  overallRating: float;
+  comment: string;
+  candidateUsername: string;
+  enterpriseUsername: string;
 }
 
 interface SendEmailOptions {

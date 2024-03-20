@@ -61,7 +61,7 @@ passport.use(
           email: profile.emails![0].value,
           googleId: profile.id,
           image: profile.photos![0].value,
-          role: 'user',
+          role: 'candidate',
           phone: 'N/A',
           password:
             profile.emails![0].value +
