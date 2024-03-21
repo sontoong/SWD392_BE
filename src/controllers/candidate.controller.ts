@@ -104,6 +104,89 @@ class CandidateController {
     }
   );
 
+  public viewProfileById = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const candidateId = req.params.id;
+      const allowedFields = ALLOWED_ACCOUNT_FIELDS;
+      const candidate = await Candidate.findOne({
+        where: { accountId: candidateId },
+        attributes: allowedFields,
+        include: [
+          {
+            model: CandidateInfo,
+            include: [
+              {
+                model: Language,
+                as: 'languages',
+                attributes: ['languageId', 'name']
+              },
+              {
+                model: JobTitle,
+                as: 'jobTitle',
+                include: [
+                  {
+                    model: Skill,
+                    as: 'skills',
+                    attributes: ['skillId', 'skillName']
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      });
+      if (!candidate) {
+        return next(new AppError('Candidate not found', 404));
+      }
+      const sortBy = req.body.sortBy || 'createdAt';
+      const limit = req.body.limit || LIMIT_PAGE;
+      // let offset = 0 || OFFSET;
+      const offset = req.body.page ? 0 + (req.body.page - 1) * limit : OFFSET;
+      // if (req.body.page) {
+      //   offset = 0 + (req.body.page - 1) * limit;
+      // }
+      const ratings = await Rating.findAll({
+        where: { candidateUsername: candidate.username },
+        attributes: [
+          [sequelize.fn('avg', sequelize.col('price')), 'avg_price'],
+          [sequelize.fn('avg', sequelize.col('time')), 'avg_time'],
+          [
+            sequelize.fn('avg', sequelize.col('responsibility')),
+            'avg_responsibility'
+          ],
+          [
+            sequelize.fn('avg', sequelize.col('communication')),
+            'avg_communication'
+          ],
+          [
+            sequelize.fn('avg', sequelize.col('overallRating')),
+            'avg_overallRating'
+          ],
+          [sequelize.fn('count', sequelize.col('comment')), 'comment_count']
+        ],
+        group: ['candidateUsername'],
+        raw: true
+      });
+
+      const comments = await Rating.findAll({
+        where: { candidateUsername: candidate.username },
+        attributes: ['comment', 'overallRating', 'enterpriseUsername'],
+        order: [[sortBy, 'DESC']], // Assuming you want to sort comments by 'sortBy'
+        limit: limit,
+        offset: offset
+      });
+
+      res.status(200).json({
+        status: 'success',
+        data: {
+          candidate,
+          ratings,
+          comments
+        }
+      });
+    }
+  );
+
   public sendVerifyRequest = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {}
   );
@@ -178,6 +261,21 @@ class CandidateController {
   //     }
 
   //     const candidate = await JobTitleSkill.update()
+  //   }
+  // );
+
+  // public priceAnnouncement = catchAsync(
+  //   async (req: Request, res: Response, next: NextFunction) => {
+  //     const candidateId = req.userInfo?.accountId;
+  //     const { price, estimateTime } = req.body;
+  //     const candidate = await CandidateInfo.update(
+  //       { price },
+  //       { where: { accountId: candidateId } }
+  //     );
+  //     res.status(200).json({
+  //       status: 'success',
+  //       data: candidate
+  //     });
   //   }
   // );
 }

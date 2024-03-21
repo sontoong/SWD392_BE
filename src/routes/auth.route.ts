@@ -120,10 +120,95 @@ router.get(
   authController.currentUser
 );
 
+/**
+ * @swagger
+ * /auth/forgot-password:
+ *   post:
+ *     summary: Request a password reset token
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Password reset token sent successfully
+ *       '404':
+ *         description: User not found with the provided email
+ *       '500':
+ *         description: Internal server error, unable to send email
+ */
 router.post('/forgot-password', authController.forgotPassword);
+
+/**
+ * @swagger
+ * /auth/reset-password/{token}:
+ *   patch:
+ *     summary: Reset user password using reset token
+ *     tags: [Authentication]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         description: Password reset token received via email
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               password:
+ *                 type: string
+ *               passwordConfirm:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Password reset successfully
+ *       '400':
+ *         description: Token is invalid or has expired, or passwords do not match
+ */
 
 router.patch('/reset-password/:token', authController.resetPassword);
 
+/**
+ * @swagger
+ * /auth/change-password:
+ *   patch:
+ *     summary: Change user password
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               passwordCurrent:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *               newPasswordConfirm:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Password changed successfully
+ *       '401':
+ *         description: Current password is wrong
+ *       '404':
+ *         description: User not found
+ *       '400':
+ *         description: New passwords do not match
+ */
 router.patch('/change-password', protectRoute, authController.changePassword);
 
 export default router;

@@ -5,6 +5,13 @@ const router = express.Router();
 
 /**
  * @swagger
+ * tags:
+ *   name: Job Titles
+ *   description: Endpoints for job title operations
+ */
+
+/**
+ * @swagger
  * /job-titles:
  *   get:
  *     summary: Get all jobTitles
