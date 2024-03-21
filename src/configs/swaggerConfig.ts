@@ -11,7 +11,7 @@ const options = {
     basePath: '/api/v1',
     servers: [
       {
-        url: 'http://localhost:3000/api/v1',
+        url: 'http://localhost:8080/api/v1',
         description: 'Development server'
       }
     ]
