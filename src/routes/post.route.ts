@@ -115,4 +115,5 @@ router.route("/get-one/:id").get(postController.getOneProject)
 router.route("/update/:id").put(postController.updateNewProject)
 router.route('/getPosts').post(postController.getAllNewPosts);
 router.route('/:id').get(postController.getOneProject);
+router.route("/get-by-enterprise/:enterpriseId").get(postController.getAllProjectByEnterPrise)
 export default router;
