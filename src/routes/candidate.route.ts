@@ -54,11 +54,7 @@ const router = express.Router();
  *       '500':
  *         $ref: '#/components/responses/InternalServerError'
  */
-router.get(
-  '/get-all-candidates',
-  protectRoute,
-  candidateController.getAllCandidates
-);
+router.get('/candidates', protectRoute, candidateController.getAllCandidates);
 /**
  * @swagger
  * /candidates/profile:

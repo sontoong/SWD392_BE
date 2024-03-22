@@ -14,14 +14,12 @@ import Account from './account.model';
   modelName: 'EnterpriseInfo'
 })
 class EnterpriseInfo extends Model<EnterpriseInfoAttributes> {
-  @ForeignKey(() => Account)
   @Column({
     primaryKey: true,
     autoIncrement: true,
-    type: DataType.INTEGER,
-    unique: true
+    type: DataType.INTEGER
   })
-  declare accountId: number;
+  declare enterpriseInfoId: number;
 
   @BelongsTo(() => Account, { foreignKey: 'accountId' })
   account!: Account;

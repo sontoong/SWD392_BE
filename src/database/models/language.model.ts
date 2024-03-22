@@ -17,8 +17,7 @@ class Language extends Model<LanguageAttributes> {
   @Column({
     primaryKey: true,
     autoIncrement: true,
-    type: DataType.INTEGER,
-    unique: true
+    type: DataType.INTEGER
   })
   declare languageId: number;
 
@@ -29,8 +28,12 @@ class Language extends Model<LanguageAttributes> {
   })
   declare name: string;
 
-  @BelongsToMany(() => CandidateInfo, () => CandidateLanguage)
-  candidates?: CandidateInfo[];
+  @BelongsToMany(
+    () => CandidateInfo,
+    () => CandidateLanguage,
+    'candidateInfoId'
+  )
+  candidates!: CandidateInfo[];
 }
 
 export default Language;

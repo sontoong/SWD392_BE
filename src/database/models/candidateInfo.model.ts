@@ -7,7 +7,8 @@ import {
   BelongsTo,
   AutoIncrement,
   BelongsToMany,
-  HasMany
+  HasMany,
+  HasOne
 } from 'sequelize-typescript';
 
 import Account from './account.model';
@@ -21,17 +22,18 @@ import CandidateLanguage from './candidateLanguage.model';
   modelName: 'CandidateInfo'
 })
 class CandidateInfo extends Model<CandidateInfoAttributes> {
-  @ForeignKey(() => Account)
   @Column({
     primaryKey: true,
     autoIncrement: true,
-    type: DataType.INTEGER,
-    unique: true
+    type: DataType.INTEGER
   })
-  declare accountId: number;
+  declare candidateInfoId: number;
 
   @BelongsTo(() => Account, { foreignKey: 'accountId' })
   account!: Account;
+
+  // @HasOne(() => Account, { foreignKey: 'accountId' })
+  // account!: Account;
 
   @Column({
     type: DataType.STRING,
@@ -96,7 +98,7 @@ class CandidateInfo extends Model<CandidateInfoAttributes> {
   // @HasMany(() => CandidateLanguage)
   // languages!: CandidateLanguage[];
 
-  @BelongsToMany(() => Language, () => CandidateLanguage)
+  @BelongsToMany(() => Language, () => CandidateLanguage, 'languageId')
   languages!: Language[];
 
   @ForeignKey(() => JobTitle)

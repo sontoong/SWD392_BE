@@ -3,7 +3,9 @@ import {
   Column,
   Model,
   ForeignKey,
-  DataType
+  DataType,
+  HasMany,
+  BelongsTo
 } from 'sequelize-typescript';
 import CandidateInfo from './candidateInfo.model';
 import Language from './language.model';
@@ -18,15 +20,23 @@ class CandidateLanguage extends Model {
   @Column({
     type: DataType.INTEGER,
     allowNull: false
+    // primaryKey: true
   })
-  declare candidateId: number;
+  declare candidateInfoId: number;
+
+  @BelongsTo(() => CandidateInfo, { foreignKey: 'candidateInfoId' })
+  candidateInfo!: CandidateInfo;
 
   @ForeignKey(() => Language)
   @Column({
     type: DataType.INTEGER,
     allowNull: false
+    // primaryKey: true
   })
   declare languageId: number;
+
+  @BelongsTo(() => Language, { foreignKey: 'languageId' })
+  language?: Language;
 }
 
 export default CandidateLanguage;

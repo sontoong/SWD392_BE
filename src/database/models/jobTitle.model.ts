@@ -53,10 +53,10 @@ class JobTitle extends Model<JobTitleAttributes> {
   })
   popularity?: number;
 
-  @ForeignKey(() => CandidateInfo)
-  candidateInfoId!: number;
+  // @ForeignKey(() => CandidateInfo)
+  // candidateInfoId!: number;
 
-  @BelongsTo(() => CandidateInfo)
+  @BelongsTo(() => CandidateInfo, { foreignKey: 'candidateInfoId' })
   candidateInfo!: CandidateInfo;
 
   @BelongsToMany(() => Skill, () => JobTitleSkill)

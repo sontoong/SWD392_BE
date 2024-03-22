@@ -8,7 +8,9 @@ import {
   HasOne,
   BeforeCreate,
   BeforeUpdate,
-  Default
+  Default,
+  BelongsTo,
+  ForeignKey
 } from 'sequelize-typescript';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
@@ -118,11 +120,21 @@ class Account extends Model<AccountAttributes> {
   })
   declare passwordResetExpires: number | null;
 
-  @HasOne(() => CandidateInfo)
-  candidateInfo!: CandidateInfo;
+  // @BelongsTo(() => CandidateInfo, { foreignKey: 'accountId' })
+  // candidateInfo!: CandidateInfo;
 
-  @HasOne(() => EnterpriseInfo)
-  enterpriseInfo!: EnterpriseInfo;
+  // @ForeignKey(() => CandidateInfo)
+  // @Column({
+  //   type: DataType.INTEGER,
+  //   allowNull: true
+  // })
+  // declare candidateInfoId: number;
+
+  @HasOne(() => CandidateInfo, { foreignKey: 'candidateInfoId' })
+  candidateInfo?: CandidateInfo;
+
+  @HasOne(() => EnterpriseInfo, { foreignKey: 'enterpriseInfoId' })
+  enterpriseInfo?: EnterpriseInfo;
 
   // verify password
   async verifyPassword(

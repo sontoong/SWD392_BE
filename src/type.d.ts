@@ -37,6 +37,7 @@ interface LanguageAttributes {
 
 // CandidateInfo interface
 interface CandidateInfoAttributes {
+  candidateInfoId?: number;
   accountId?: number;
   fullname: string;
   gender: 'male' | 'female' | 'other';
@@ -58,6 +59,7 @@ interface ContractAttributes {
 // EnterpriseInfo interface
 // EnterpriseInfo interface
 interface EnterpriseInfoAttributes {
+  enterpriseInfoId?: number;
   accountId?: number;
   enterpriseName: string;
   dob: Date;
