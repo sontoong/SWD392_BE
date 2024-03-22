@@ -31,14 +31,14 @@ export default function connectDB() {
     });
 
   // Synchronize models with the database
-  sequelize
-    .sync({ force: true, alter: true })
-    .then(() => {
-      console.log('Database tables synchronized');
-    })
-    .catch((error) => {
-      console.error('Error synchronizing database tables:', error);
-    });
+  // sequelize
+  //   .sync({ force: true, alter: true })
+  //   .then(() => {
+  //     console.log('Database tables synchronized');
+  //   })
+  //   .catch((error) => {
+  //     console.error('Error synchronizing database tables:', error);
+  //   });
 }
 
   

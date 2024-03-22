@@ -16,4 +16,5 @@ router.route('/doing').get(contractController.getAllContractsDoing)
 router.route('/canceled').get(contractController.getAllContractsCanceled)
 router.route('/completed').get(contractController.getAllContractsCompleted)
 router.route('/pending').get(contractController.getAllContractsPending)
+router.route('/signature').put(contractController.updateContractSignature)
 export default router;

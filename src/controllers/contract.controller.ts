@@ -18,7 +18,7 @@ import Contract, { ContractAttributes } from '~/database/models/contract.model';
 class ApplicantController {
   public createNewContract = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const { applicantId, fund, depositType, date, status, signature } =
+      const { applicantId, fund, depositType, date, status} =
         req.body;
       try {
         const requiredFields = ['applicantId', 'fund', 'depositType', 'date'];
@@ -40,8 +40,7 @@ class ApplicantController {
           fund,
           depositType,
           date,
-          status: status || 'pending', // Set default value for status if not provided
-          signature
+          status: status || 'pending' // Set default value for status if not provided
         };
 
         const newContract = await Contract.create(contractData);
@@ -56,8 +55,8 @@ class ApplicantController {
       }
     }
   );
- // cancel
- public getAllContractsCanceled = catchAsync(
+  // cancel
+  public getAllContractsCanceled = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const allContracts = await Contract.findAll({
@@ -102,7 +101,7 @@ class ApplicantController {
             }
           ],
           where: {
-            status: 'canceled' 
+            status: 'canceled'
           }
         });
 
@@ -116,8 +115,8 @@ class ApplicantController {
       }
     }
   );
- // pending
- public getAllContractsPending = catchAsync(
+  // pending
+  public getAllContractsPending = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const allContracts = await Contract.findAll({
@@ -162,7 +161,7 @@ class ApplicantController {
             }
           ],
           where: {
-            status: 'pending' 
+            status: 'pending'
           }
         });
 
@@ -176,8 +175,8 @@ class ApplicantController {
       }
     }
   );
- // completed
- public getAllContractsCompleted = catchAsync(
+  // completed
+  public getAllContractsCompleted = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const allContracts = await Contract.findAll({
@@ -222,7 +221,7 @@ class ApplicantController {
             }
           ],
           where: {
-            status: 'completed' 
+            status: 'completed'
           }
         });
 
@@ -236,8 +235,8 @@ class ApplicantController {
       }
     }
   );
- // doing
- public getAllContracts = catchAsync(
+  // doing
+  public getAllContracts = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const allContracts = await Contract.findAll({
@@ -282,7 +281,7 @@ class ApplicantController {
             }
           ],
           where: {
-            status: 'doing' 
+            status: 'doing'
           }
         });
 
@@ -296,9 +295,6 @@ class ApplicantController {
       }
     }
   );
-
-
-
 
   public getAllContractsDoing = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -457,7 +453,7 @@ class ApplicantController {
         res.status(200).json({
           success: true,
           message: 'Contract status updated to "canceled"',
-          data: contract 
+          data: contract
         });
       } catch (error: any) {
         return next(new AppError(error.message, error.code || 500));
@@ -465,26 +461,52 @@ class ApplicantController {
     }
   );
 
-  public updateContractStatusToCompleted = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params; // Assuming contract ID 
-    try {
-      const contract = await Contract.findByPk(id);
-  
-      if (!contract) {
-        return next(new AppError(`Contract with ID ${id} not found`, 404));
+  public updateContractStatusToCompleted = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { id } = req.params; // Assuming contract ID
+      try {
+        const contract = await Contract.findByPk(id);
+
+        if (!contract) {
+          return next(new AppError(`Contract with ID ${id} not found`, 404));
+        }
+
+        await contract.update({ status: 'completed' });
+
+        res.status(200).json({
+          success: true,
+          message: 'Contract status updated to "completed"',
+          data: contract
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code || 500));
       }
-  
-      await contract.update({ status: "completed" });
-  
-      res.status(200).json({
-        success: true,
-        message: 'Contract status updated to "completed"',
-        data: contract 
-      });
-    } catch (error: any) {
-      return next(new AppError(error.message, error.code || 500));
     }
-  });
+  );
+
+  public updateContractSignature = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { id } = req.params;
+      const { signature } = req.body; // Assuming contract ID
+      try {
+        const contract = await Contract.findByPk(id);
+
+        if (!contract) {
+          return next(new AppError(`Contract with ID ${id} not found`, 404));
+        }
+
+        await contract.update({ signature: signature });
+
+        res.status(200).json({
+          success: true,
+          message: 'Contract Signature updated successfully"',
+          data: contract
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code || 500));
+      }
+    }
+  );
 }
 
 export default new ApplicantController();
