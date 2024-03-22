@@ -8,7 +8,7 @@ import Project, {
   ProjectAttributes
 } from '~/database/models/project.model';
 import { Op } from 'sequelize';
-import { union } from 'lodash';
+import { includes, union } from 'lodash';
 import JobTitle from '~/database/models/jobTitle.model';
 import Account from '~/database/models/account.model';
 interface Pagination {
@@ -96,6 +96,22 @@ class PostController {
             { description: { [Op.like]: `%${search}%` } }
           ]
         },
+        include: [
+          {
+            model: Account,
+            attributes: {
+              exclude: [
+                'password',
+                'passwordResetToken',
+                'passwordResetExpires',
+                'active',
+                'createdAt',
+                'updateAt'
+              ]
+            }
+          },
+          { model: JobTitle }
+        ],
         offset,
         limit
       });
@@ -133,7 +149,24 @@ class PostController {
 
   public getOneProject = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const project = await Project.findByPk(req.params.id);
+      const project = await Project.findByPk(req.params.id, {
+        include: [
+          {
+            model: Account,
+            attributes: {
+              exclude: [
+                'password',
+                'passwordResetToken',
+                'passwordResetExpires',
+                'active',
+                'createdAt',
+                'updateAt'
+              ]
+            }
+          },
+          { model: JobTitle }
+        ]
+      });
       if (!project) {
         return next(new AppError('hello error', 404));
       }
