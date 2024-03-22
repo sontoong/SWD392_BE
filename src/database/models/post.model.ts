@@ -26,6 +26,8 @@ class Post extends Model<PostAttributes> {
   })
   postId!: number;
 
+
+  
   @ForeignKey(() => Account)
   @Column({
     allowNull: false,

@@ -3,8 +3,149 @@ import catchAsync from '../utils/catchAsync';
 import Post from '../database/models/post.model';
 import AppError from '~/utils/appError';
 import { LIMIT_PAGE, OFFSET } from '~/utils/constant';
-
+import Project, {
+  OptionalRequirements,
+  ProjectAttributes
+} from '~/database/models/project.model';
+import { Op } from 'sequelize';
+interface Pagination {
+  page: number;
+  limit: number;
+  search: string;
+}
 class PostController {
+  public createNewPost = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const {
+        title,
+        description,
+        funding,
+        candidateRequirement,
+        initialFunding,
+        timeToComplete,
+        createdBy,
+        privacy,
+        projectType,
+        optionalRequirements
+      } = req.body;
+      try {
+        const requiredFields = [
+          'title',
+          'description',
+          'funding',
+          'candidateRequirement',
+          'initialFunding',
+          'timeToComplete',
+          'createdBy',
+          'privacy',
+          'projectType'
+        ];
+        for (const field of requiredFields) {
+          if (!(field in req.body)) {
+            return next(new AppError('invalid input', 404));
+          }
+        }
+        const existingProject = await Project.findOne({ where: { title } });
+        if (existingProject) {
+          return next(
+            new AppError(
+              `A project with the title "${title}" already exists.`,
+              400
+            )
+          );
+        }
+        const projectData: ProjectAttributes = {
+          title,
+          description,
+          funding,
+          candidateRequirement,
+          initialFunding,
+          timeToComplete,
+          createdBy,
+          privacy,
+          projectType,
+          optionalRequirements: req.body
+            .optionalRequirements as OptionalRequirements
+        };
+        const newProject = await Project.create(projectData);
+        res.status(201).json({
+          success: true,
+          message: 'Project created successfully.',
+          data: newProject
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code));
+      }
+    }
+  );
+
+  public getAllNewPosts = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { page = 1, limit = 10, search = '' } = req.body as Pagination;
+
+      const offset = (page - 1) * limit;
+      const projects = await Project.findAll({
+        where: {
+          [Op.or]: [
+            { title: { [Op.like]: `%${search}%` } },
+            { description: { [Op.like]: `%${search}%` } }
+          ]
+        },
+        offset,
+        limit
+      });
+
+      const parsedProjects = projects.map((project) => {
+        const parsedOptionalRequirements: OptionalRequirements = JSON.parse(
+          String(project.optionalRequirements)
+        );
+        return {
+          ...project.toJSON(),
+          optionalRequirements: parsedOptionalRequirements
+        };
+      });
+
+      const totalCount = await Project.count({
+        where: {
+          [Op.or]: [
+            { title: { [Op.like]: `%${search}%` } },
+            { description: { [Op.like]: `%${search}%` } }
+          ]
+        }
+      });
+
+      res.status(200).json({
+        status: 'success',
+        data: {
+          projects: parsedProjects,
+          totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+          currentPage: page
+        }
+      });
+    }
+  );
+
+  public getOneProject = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const project = await Project.findByPk(req.params.id);
+      if (!project) {
+        return next(new AppError('hello error', 404));
+      }
+
+      const optionalRequirements: OptionalRequirements = JSON.parse(
+        String(project.optionalRequirements)
+      ) as OptionalRequirements;
+      res.status(200).json({
+        status: 'success',
+        data: {
+          ...project.toJSON(),
+          optionalRequirements
+        }
+      });
+    }
+  );
+
   public createPost = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       const {

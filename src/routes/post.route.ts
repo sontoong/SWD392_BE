@@ -109,5 +109,7 @@ router
   .post(protectRoute, postController.createPost)
   .patch(protectRoute, postController.updatePost)
   .delete(protectRoute, postController.deletePost);
-
+router.route('/create').post(postController.createNewPost);
+router.route('/get-all').get(postController.getAllNewPosts);
+router.route("/:id").get(postController.getOneProject)
 export default router;

@@ -75,7 +75,7 @@ app.use(
 
 // enable CORS for all requests
 var corsOptions = {
-  origin: `http://localhost:${process.env.PORT}`,
+  origin: [`http://localhost:3000`, 'http://localhost:3001'],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
