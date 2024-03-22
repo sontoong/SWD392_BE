@@ -8,7 +8,7 @@ import Project, {
   ProjectAttributes
 } from '~/database/models/project.model';
 import { Op, where } from 'sequelize';
-import { union } from 'lodash';
+import { includes, union } from 'lodash';
 import JobTitle from '~/database/models/jobTitle.model';
 import Account from '~/database/models/account.model';
 import Applicant, {
@@ -101,12 +101,48 @@ class ApplicantController {
     }
   );
 
-
   public getAllApplicant = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const allApplicant = await Applicant.findAll({})
-       
+        const allApplicant = await Applicant.findAll({
+          include: [
+            {
+              model: Project,
+              attributes: {
+                exclude: [
+                 'optionalRequirements',
+                 'candidateCount',
+                 'inviteAccepted',
+                 'inviteSent',
+                 'applicationCount',
+                 'isVerified',
+                 'isCompleted',
+                 'projectField',
+                 'createdBy'
+                ]
+              }
+            },
+            {
+              model: Account,
+              as: 'candidate',
+              attributes: {
+                exclude: [
+                  'password',
+                  'googleId',
+                  'password',
+                  'wallet',
+                  'verified',
+                  'active',
+                  'passwordResetToken',
+                  'passwordResetExpires',
+                  'updatedAt',
+                  'createdAt'
+                ]
+              }
+            }
+          ]
+        });
+
         res.status(201).json({
           success: true,
           message: 'fetch all aplicants',
@@ -118,11 +154,49 @@ class ApplicantController {
     }
   );
 
-
   public getAllApplicantByID = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const applicant = await Applicant.findByPk(req.params.id)
+        const applicant = await Applicant.findByPk(req.params.id,
+            
+            {
+                include: [
+                    {
+                      model: Project,
+                      attributes: {
+                        exclude: [
+                         'optionalRequirements',
+                         'candidateCount',
+                         'inviteAccepted',
+                         'inviteSent',
+                         'applicationCount',
+                         'isVerified',
+                         'isCompleted',
+                         'projectField',
+                         'createdBy'
+                        ]
+                      }
+                    },
+                    {
+                      model: Account,
+                      as: 'candidate',
+                      attributes: {
+                        exclude: [
+                          'password',
+                          'googleId',
+                          'password',
+                          'wallet',
+                          'verified',
+                          'active',
+                          'passwordResetToken',
+                          'passwordResetExpires',
+                          'updatedAt',
+                          'createdAt'
+                        ]
+                      }
+                    }
+                  ]
+            });
         res.status(201).json({
           success: true,
           message: 'fetch all aplicants',
