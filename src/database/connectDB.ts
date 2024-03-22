@@ -40,3 +40,5 @@ export default function connectDB() {
   //     console.error('Error synchronizing database tables:', error);
   //   });
 }
+
+  

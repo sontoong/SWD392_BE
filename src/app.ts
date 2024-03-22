@@ -13,15 +13,16 @@ import specs from './configs/swaggerConfig';
 
 import AppError from './utils/appError';
 import globalErrorHandler from './utils/globalErrorHandler';
-
+import applicantRouter from './routes/applicant.route';
 import adminRouter from './routes/admin.route';
 import candidateRouter from './routes/candidate.route';
 import enterpriseRouter from './routes/enterprise.route';
 import authRouter from './routes/auth.route';
 import postRouter from './routes/post.route';
 import jobTitleRouter from './routes/jobTitle.route';
+import orderRouter from './routes/order.route';
+import contractRouter from './routes/contract.route';
 import skillRouter from './routes/skill.route';
-
 import morgan from 'morgan';
 const app = express();
 
@@ -107,6 +108,9 @@ app.use('/api/v1/candidates', candidateRouter);
 app.use('/api/v1/enterprises', enterpriseRouter);
 app.use('/api/v1/posts', postRouter);
 app.use('/api/v1/job-titles', jobTitleRouter);
+app.use('/api/v1/order', orderRouter);
+app.use('/api/v1/applicant', applicantRouter);
+app.use('/api/v1/contract', contractRouter);
 app.use('/api/v1/skills', skillRouter);
 // 3) ERROR HANDLING
 app.all('*', (req, res, next) => {

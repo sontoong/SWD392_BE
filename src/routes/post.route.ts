@@ -110,6 +110,10 @@ router
   .patch(protectRoute, postController.updatePost)
   .delete(protectRoute, postController.deletePost);
 router.route('/create').post(postController.createNewPost);
+router.route('/get-all').post(postController.getAllNewPosts);
+router.route("/get-one/:id").get(postController.getOneProject)
+router.route("/update/:id").put(postController.updateNewProject)
 router.route('/getPosts').post(postController.getAllNewPosts);
 router.route('/:id').get(postController.getOneProject);
+router.route("/get-by-enterprise/:enterpriseId").get(postController.getAllProjectByEnterPrise)
 export default router;

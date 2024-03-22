@@ -8,6 +8,9 @@ import Project, {
   ProjectAttributes
 } from '~/database/models/project.model';
 import { Op } from 'sequelize';
+import { includes, union } from 'lodash';
+import JobTitle from '~/database/models/jobTitle.model';
+import Account from '~/database/models/account.model';
 interface Pagination {
   page: number;
   limit: number;
@@ -23,6 +26,7 @@ class PostController {
         candidateRequirement,
         initialFunding,
         timeToComplete,
+        projectField,
         createdBy,
         privacy,
         projectType,
@@ -61,6 +65,7 @@ class PostController {
           candidateRequirement,
           initialFunding,
           timeToComplete,
+          projectField,
           createdBy,
           privacy,
           projectType,
@@ -91,6 +96,22 @@ class PostController {
             { description: { [Op.like]: `%${search}%` } }
           ]
         },
+        include: [
+          {
+            model: Account,
+            attributes: {
+              exclude: [
+                'password',
+                'passwordResetToken',
+                'passwordResetExpires',
+                'active',
+                'createdAt',
+                'updateAt'
+              ]
+            }
+          },
+          { model: JobTitle }
+        ],
         offset,
         limit
       });
@@ -128,7 +149,24 @@ class PostController {
 
   public getOneProject = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const project = await Project.findByPk(req.params.id);
+      const project = await Project.findByPk(req.params.id, {
+        include: [
+          {
+            model: Account,
+            attributes: {
+              exclude: [
+                'password',
+                'passwordResetToken',
+                'passwordResetExpires',
+                'active',
+                'createdAt',
+                'updateAt'
+              ]
+            }
+          },
+          { model: JobTitle }
+        ]
+      });
       if (!project) {
         return next(new AppError('hello error', 404));
       }
@@ -142,6 +180,124 @@ class PostController {
           ...project.toJSON(),
           optionalRequirements
         }
+      });
+    }
+  );
+
+  public updateNewProject = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const {
+        title,
+        description,
+        funding,
+        candidateRequirement,
+        initialFunding,
+        timeToComplete,
+        createdBy, // not it
+        privacy,
+        projectType,
+        optionalRequirements
+      } = req.body;
+      const id = req.params.id;
+      try {
+        const existingProject = await Project.findByPk(id);
+        if (!existingProject) {
+          return next(new AppError(`A project not found`, 400));
+        }
+        existingProject.title = title || existingProject.title;
+        existingProject.description =
+          description || existingProject.description;
+        existingProject.funding = funding || existingProject.funding;
+        existingProject.candidateRequirement =
+          candidateRequirement || existingProject.candidateRequirement;
+        existingProject.initialFunding =
+          initialFunding || existingProject.initialFunding;
+        existingProject.timeToComplete =
+          timeToComplete || existingProject.timeToComplete;
+        existingProject.privacy = privacy || existingProject.privacy;
+        existingProject.projectType =
+          projectType || existingProject.projectType;
+
+        // optionalRequirement
+
+        if (!existingProject.optionalRequirements) {
+          existingProject.optionalRequirements = undefined;
+        }
+        if (optionalRequirements) {
+          // Parse the existing optionalRequirements string into an object
+          // const updateOptional = JSON.parse(existingProject.optionalRequirements || undefined);
+          // Update the properties with new values
+          // updateOptional.minimumCompletedProjects = optionalRequirements.minimumCompletedProjects || updateOptional.minimumCompletedProjects;
+          // updateOptional.rating = optionalRequirements.rating || updateOptional.rating;
+          // updateOptional.nation = optionalRequirements.nation || updateOptional.nation;
+          // updateOptional.language = optionalRequirements.language || updateOptional.language;
+          // updateOptional.skills = optionalRequirements.skills || updateOptional.skills;
+          // updateOptional.questions = optionalRequirements.questions || updateOptional.questions;
+          // Convert the updated object back to a string
+          // existingProject.optionalRequirements = JSON.stringify(updateOptional);
+        }
+
+        //optional requirements
+        await existingProject.save();
+
+        const optional: OptionalRequirements = JSON.parse(
+          String(existingProject.optionalRequirements)
+        ) as OptionalRequirements;
+        return res.status(201).json({
+          success: true,
+          data: {
+            ...existingProject.toJSON(),
+            optional
+          }
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code));
+      }
+    }
+  );
+
+  public getAllProjectByEnterPrise = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const enterpriseId = req.params.enterpriseId;
+      const projects = await Project.findAll({
+        where: {
+          createdBy: enterpriseId
+        },
+
+        include: [
+          {
+            model: Account,
+            attributes: {
+              exclude: [
+                'password',
+                'passwordResetToken',
+                'passwordResetExpires',
+                'active',
+                'createdAt',
+                'updatedAt',
+                'verified'
+              ]
+            }
+          },
+          { model: JobTitle }
+        ]
+      });
+      if (!projects) {
+        return next(new AppError('hello error', 404));
+      }
+
+      const parsedProjects = projects.map((project) => {
+        const parsedOptionalRequirements: OptionalRequirements = JSON.parse(
+          String(project.optionalRequirements)
+        );
+        return {
+          ...project.toJSON(),
+          optionalRequirements: parsedOptionalRequirements
+        };
+      });
+      res.status(200).json({
+        status: 'success',
+        data: parsedProjects
       });
     }
   );

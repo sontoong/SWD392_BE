@@ -31,6 +31,7 @@ export interface OptionalRequirements {
 
 export interface ProjectAttributes {
   projectId?: number;
+  projectField: number;
   title: string;
   description: string;
   funding: string;
@@ -50,6 +51,7 @@ export interface ProjectAttributes {
   inviteSent?: number;
   inviteAccepted?: number;
   candidateCount?: number;
+  status?: string;
 }
 @Table({
   timestamps: true,
@@ -70,6 +72,15 @@ class Project extends Model<ProjectAttributes> {
   createdBy!: number;
   @BelongsTo(() => Account)
   createdByAccount!: Account;
+
+  @ForeignKey(() => JobTitle)
+  @Column({
+    allowNull: false,
+    type: DataType.INTEGER
+  })
+  projectField!: number;
+  @BelongsTo(() => JobTitle)
+  createdByProjectField!: JobTitle;
 
   @Column({
     allowNull: false,
@@ -118,6 +129,13 @@ class Project extends Model<ProjectAttributes> {
     allowNull: false
   })
   projectType!: string;
+
+  @Column({
+    type: DataType.ENUM('hiring', 'closed', 'doing'),
+    allowNull: true,
+    defaultValue: 'hiring'
+  })
+  status!: string;
 
   @Column({
     type: DataType.DATE,
