@@ -133,7 +133,9 @@ class PostController {
 
   public getOneProject = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const project = await Project.findByPk(req.params.id);
+      const project = await Project.findByPk(req.params.id, {
+        include: [{ model: JobTitle }]
+      });
       if (!project) {
         return next(new AppError('hello error', 404));
       }
