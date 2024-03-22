@@ -58,10 +58,10 @@ class CandidateInfo extends Model<CandidateInfoAttributes> {
   declare nationality: string;
 
   @Column({
-    type: DataType.ENUM('junior', 'middle', 'senior', 'expert'),
+    type: DataType.ENUM('junior', 'senior', 'expert'),
     allowNull: true
   })
-  declare experience: 'junior' | 'middle' | 'senior' | 'expert';
+  declare experience: 'junior' | 'senior' | 'expert';
 
   @Column({
     type: DataType.STRING,
