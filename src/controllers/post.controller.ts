@@ -297,7 +297,7 @@ class PostController {
       });
       res.status(200).json({
         status: 'success',
-        projects: parsedProjects
+        data: parsedProjects
       });
     }
   );
