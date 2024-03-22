@@ -111,5 +111,6 @@ router
   .delete(protectRoute, postController.deletePost);
 router.route('/create').post(postController.createNewPost);
 router.route('/get-all').get(postController.getAllNewPosts);
-router.route("/:id").get(postController.getOneProject)
+router.route("/get-one/:id").get(postController.getOneProject)
+router.route("/update/:id").put(postController.updateNewProject)
 export default router;

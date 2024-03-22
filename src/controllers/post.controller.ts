@@ -8,6 +8,7 @@ import Project, {
   ProjectAttributes
 } from '~/database/models/project.model';
 import { Op } from 'sequelize';
+import { union } from 'lodash';
 interface Pagination {
   page: number;
   limit: number;
@@ -23,6 +24,7 @@ class PostController {
         candidateRequirement,
         initialFunding,
         timeToComplete,
+        projectField,
         createdBy,
         privacy,
         projectType,
@@ -61,6 +63,7 @@ class PostController {
           candidateRequirement,
           initialFunding,
           timeToComplete,
+          projectField,
           createdBy,
           privacy,
           projectType,
@@ -143,6 +146,80 @@ class PostController {
           optionalRequirements
         }
       });
+    }
+  );
+
+  public updateNewProject = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const {
+        title,
+        description,
+        funding,
+        candidateRequirement,
+        initialFunding,
+        timeToComplete,
+        createdBy, // not it
+        privacy,
+        projectType,
+        optionalRequirements
+      } = req.body;
+      const id = req.params.id;
+      try {
+        const existingProject = await Project.findByPk(id);
+        if (!existingProject) {
+          return next(new AppError(`A project not found`, 400));
+        }
+        existingProject.title = title || existingProject.title;
+        existingProject.description =
+          description || existingProject.description;
+        existingProject.funding = funding || existingProject.funding;
+        existingProject.candidateRequirement =
+          candidateRequirement || existingProject.candidateRequirement;
+        existingProject.initialFunding =
+          initialFunding || existingProject.initialFunding;
+        existingProject.timeToComplete =
+          timeToComplete || existingProject.timeToComplete;
+        existingProject.privacy = privacy || existingProject.privacy;
+        existingProject.projectType =
+          projectType || existingProject.projectType;
+
+        // optionalRequirement
+
+        if (!existingProject.optionalRequirements) {
+          existingProject.optionalRequirements = undefined;
+        }
+        if (optionalRequirements) {
+          // Parse the existing optionalRequirements string into an object
+          // const updateOptional = JSON.parse(existingProject.optionalRequirements || undefined);
+          
+          // Update the properties with new values
+          // updateOptional.minimumCompletedProjects = optionalRequirements.minimumCompletedProjects || updateOptional.minimumCompletedProjects;
+          // updateOptional.rating = optionalRequirements.rating || updateOptional.rating;
+          // updateOptional.nation = optionalRequirements.nation || updateOptional.nation;
+          // updateOptional.language = optionalRequirements.language || updateOptional.language;
+          // updateOptional.skills = optionalRequirements.skills || updateOptional.skills;
+          // updateOptional.questions = optionalRequirements.questions || updateOptional.questions;
+  
+          // Convert the updated object back to a string
+          // existingProject.optionalRequirements = JSON.stringify(updateOptional);
+        }
+  
+        //optional requirements
+        await existingProject.save();
+
+        const optional: OptionalRequirements = JSON.parse(
+          String(existingProject.optionalRequirements)
+        ) as OptionalRequirements;
+        return res.status(201).json({
+          success: true,
+          data: {
+            ...existingProject.toJSON(),
+            optional
+          }
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code));
+      }
     }
   );
 
