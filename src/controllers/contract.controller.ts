@@ -14,199 +14,477 @@ import Account from '~/database/models/account.model';
 import Applicant, {
   ApplicantAttributes
 } from '~/database/models/applicant.model';
+import Contract, { ContractAttributes } from '~/database/models/contract.model';
 class ApplicantController {
-  public createNewApplicant = catchAsync(
+  public createNewContract = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const { projectId, candidateId, question, money, time } = req.body;
+      const { applicantId, fund, depositType, date, status, signature } =
+        req.body;
       try {
-        const requiredFields = [
-          'projectId',
-          'candidateId',
-          'questions',
-          'money',
-          'time'
-        ];
+        const requiredFields = ['applicantId', 'fund', 'depositType', 'date'];
         for (const field of requiredFields) {
           if (!(field in req.body)) {
             return next(new AppError(`Invalid input: Missing ${field}`, 400));
           }
         }
-        const project = await Project.findByPk(projectId);
-        if (!project) {
+
+        const applicant = await Applicant.findByPk(applicantId);
+        if (!applicant) {
           return next(
-            new AppError(`Project with ID ${projectId} not found`, 404)
+            new AppError(`Applicant with ID ${applicantId} not found`, 404)
           );
         }
-        const candidate = await Account.findByPk(candidateId);
-        if (!candidate) {
-          return next(
-            new AppError(`Candidate with ID ${candidateId} not found`, 404)
-          );
-        }
-        const applicantData: ApplicantAttributes = {
-          projectId,
-          candidateId,
-          question,
-          money,
-          time
+
+        const contractData: ContractAttributes = {
+          applicantId,
+          fund,
+          depositType,
+          date,
+          status: status || 'pending', // Set default value for status if not provided
+          signature
         };
-        const newApplicant = await Applicant.create(applicantData);
+
+        const newContract = await Contract.create(contractData);
 
         res.status(201).json({
           success: true,
-          message: 'Applicant created successfully.',
-          data: newApplicant
+          message: 'Contract created successfully.',
+          data: newContract
         });
       } catch (error: any) {
         return next(new AppError(error.message, error.code));
       }
     }
   );
-
-  public updateStatusApplicantToRejected = catchAsync(
-    async (req: Request, res: Response, next: NextFunction) => {
-      const { id } = req.params;
-      try {
-        const applicant = await Applicant.findByPk(id);
-        if (!applicant) {
-          return next(new AppError(`Applicant ith ID ${id} not found`, 404));
-        }
-        await applicant.update({ status: 'rejected' });
-        res.status(201).json({
-          success: true,
-          message: 'Applicant update Rejected'
-        });
-      } catch (error: any) {
-        return next(new AppError(error.message, error.code));
-      }
-    }
-  );
-
-  public updateStatusApplicantToAccepted = catchAsync(
-    async (req: Request, res: Response, next: NextFunction) => {
-      const { id } = req.params;
-      try {
-        const applicant = await Applicant.findByPk(id);
-        if (!applicant) {
-          return next(new AppError(`Applicant ith ID ${id} not found`, 404));
-        }
-        await applicant.update({ status: 'accepted' });
-        res.status(201).json({
-          success: true,
-          message: 'Applicant update Accepted'
-        });
-      } catch (error: any) {
-        return next(new AppError(error.message, error.code));
-      }
-    }
-  );
-
-  public getAllApplicant = catchAsync(
+ // cancel
+ public getAllContractsCanceled = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const allApplicant = await Applicant.findAll({
+        const allContracts = await Contract.findAll({
           include: [
             {
-              model: Project,
-              attributes: {
-                exclude: [
-                 'optionalRequirements',
-                 'candidateCount',
-                 'inviteAccepted',
-                 'inviteSent',
-                 'applicationCount',
-                 'isVerified',
-                 'isCompleted',
-                 'projectField',
-                 'createdBy'
-                ]
-              }
-            },
+              model: Applicant,
+              include: [
+                {
+                  model: Project,
+                  attributes: {
+                    exclude: [
+                      'optionalRequirements',
+                      'candidateCount',
+                      'inviteAccepted',
+                      'inviteSent',
+                      'applicationCount',
+                      'isVerified',
+                      'isCompleted',
+                      'projectField',
+                      'createdBy'
+                    ]
+                  }
+                },
+                {
+                  model: Account,
+                  attributes: {
+                    exclude: [
+                      'password',
+                      'googleId',
+                      'password',
+                      'wallet',
+                      'verified',
+                      'active',
+                      'passwordResetToken',
+                      'passwordResetExpires',
+                      'updatedAt',
+                      'createdAt'
+                    ]
+                  }
+                }
+              ]
+            }
+          ],
+          where: {
+            status: 'canceled' 
+          }
+        });
+
+        res.status(200).json({
+          success: true,
+          message: 'All contracts fetched successfully',
+          data: allContracts
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code || 500));
+      }
+    }
+  );
+ // pending
+ public getAllContractsPending = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const allContracts = await Contract.findAll({
+          include: [
             {
-              model: Account,
-              as: 'candidate',
-              attributes: {
-                exclude: [
-                  'password',
-                  'googleId',
-                  'password',
-                  'wallet',
-                  'verified',
-                  'active',
-                  'passwordResetToken',
-                  'passwordResetExpires',
-                  'updatedAt',
-                  'createdAt'
-                ]
-              }
+              model: Applicant,
+              include: [
+                {
+                  model: Project,
+                  attributes: {
+                    exclude: [
+                      'optionalRequirements',
+                      'candidateCount',
+                      'inviteAccepted',
+                      'inviteSent',
+                      'applicationCount',
+                      'isVerified',
+                      'isCompleted',
+                      'projectField',
+                      'createdBy'
+                    ]
+                  }
+                },
+                {
+                  model: Account,
+                  attributes: {
+                    exclude: [
+                      'password',
+                      'googleId',
+                      'password',
+                      'wallet',
+                      'verified',
+                      'active',
+                      'passwordResetToken',
+                      'passwordResetExpires',
+                      'updatedAt',
+                      'createdAt'
+                    ]
+                  }
+                }
+              ]
+            }
+          ],
+          where: {
+            status: 'pending' 
+          }
+        });
+
+        res.status(200).json({
+          success: true,
+          message: 'All contracts fetched successfully',
+          data: allContracts
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code || 500));
+      }
+    }
+  );
+ // completed
+ public getAllContractsCompleted = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const allContracts = await Contract.findAll({
+          include: [
+            {
+              model: Applicant,
+              include: [
+                {
+                  model: Project,
+                  attributes: {
+                    exclude: [
+                      'optionalRequirements',
+                      'candidateCount',
+                      'inviteAccepted',
+                      'inviteSent',
+                      'applicationCount',
+                      'isVerified',
+                      'isCompleted',
+                      'projectField',
+                      'createdBy'
+                    ]
+                  }
+                },
+                {
+                  model: Account,
+                  attributes: {
+                    exclude: [
+                      'password',
+                      'googleId',
+                      'password',
+                      'wallet',
+                      'verified',
+                      'active',
+                      'passwordResetToken',
+                      'passwordResetExpires',
+                      'updatedAt',
+                      'createdAt'
+                    ]
+                  }
+                }
+              ]
+            }
+          ],
+          where: {
+            status: 'completed' 
+          }
+        });
+
+        res.status(200).json({
+          success: true,
+          message: 'All contracts fetched successfully',
+          data: allContracts
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code || 500));
+      }
+    }
+  );
+ // doing
+ public getAllContracts = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const allContracts = await Contract.findAll({
+          include: [
+            {
+              model: Applicant,
+              include: [
+                {
+                  model: Project,
+                  attributes: {
+                    exclude: [
+                      'optionalRequirements',
+                      'candidateCount',
+                      'inviteAccepted',
+                      'inviteSent',
+                      'applicationCount',
+                      'isVerified',
+                      'isCompleted',
+                      'projectField',
+                      'createdBy'
+                    ]
+                  }
+                },
+                {
+                  model: Account,
+                  attributes: {
+                    exclude: [
+                      'password',
+                      'googleId',
+                      'password',
+                      'wallet',
+                      'verified',
+                      'active',
+                      'passwordResetToken',
+                      'passwordResetExpires',
+                      'updatedAt',
+                      'createdAt'
+                    ]
+                  }
+                }
+              ]
+            }
+          ],
+          where: {
+            status: 'doing' 
+          }
+        });
+
+        res.status(200).json({
+          success: true,
+          message: 'All contracts fetched successfully',
+          data: allContracts
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code || 500));
+      }
+    }
+  );
+
+
+
+
+  public getAllContractsDoing = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const allContracts = await Contract.findAll({
+          include: [
+            {
+              model: Applicant,
+              include: [
+                {
+                  model: Project,
+                  attributes: {
+                    exclude: [
+                      'optionalRequirements',
+                      'candidateCount',
+                      'inviteAccepted',
+                      'inviteSent',
+                      'applicationCount',
+                      'isVerified',
+                      'isCompleted',
+                      'projectField',
+                      'createdBy'
+                    ]
+                  }
+                },
+                {
+                  model: Account,
+                  attributes: {
+                    exclude: [
+                      'password',
+                      'googleId',
+                      'password',
+                      'wallet',
+                      'verified',
+                      'active',
+                      'passwordResetToken',
+                      'passwordResetExpires',
+                      'updatedAt',
+                      'createdAt'
+                    ]
+                  }
+                }
+              ]
             }
           ]
         });
 
-        res.status(201).json({
+        res.status(200).json({
           success: true,
-          message: 'fetch all aplicants',
-          data: allApplicant
+          message: 'All contracts fetched successfully',
+          data: allContracts
         });
       } catch (error: any) {
-        return next(new AppError(error.message, error.code));
+        return next(new AppError(error.message, error.code || 500));
       }
     }
   );
 
-  public getAllApplicantByID = catchAsync(
+  public getOneContractById = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
+      const { id } = req.params;
       try {
-        const applicant = await Applicant.findByPk(req.params.id,
-            
+        const contract = await Contract.findByPk(id, {
+          include: [
             {
-                include: [
-                    {
-                      model: Project,
-                      attributes: {
-                        exclude: [
-                         'optionalRequirements',
-                         'candidateCount',
-                         'inviteAccepted',
-                         'inviteSent',
-                         'applicationCount',
-                         'isVerified',
-                         'isCompleted',
-                         'projectField',
-                         'createdBy'
-                        ]
-                      }
-                    },
-                    {
-                      model: Account,
-                      as: 'candidate',
-                      attributes: {
-                        exclude: [
-                          'password',
-                          'googleId',
-                          'password',
-                          'wallet',
-                          'verified',
-                          'active',
-                          'passwordResetToken',
-                          'passwordResetExpires',
-                          'updatedAt',
-                          'createdAt'
-                        ]
-                      }
-                    }
-                  ]
-            });
-        res.status(201).json({
+              model: Applicant,
+              include: [
+                {
+                  model: Project,
+                  attributes: {
+                    exclude: [
+                      'optionalRequirements',
+                      'candidateCount',
+                      'inviteAccepted',
+                      'inviteSent',
+                      'applicationCount',
+                      'isVerified',
+                      'isCompleted',
+                      'projectField',
+                      'createdBy'
+                    ]
+                  }
+                },
+                {
+                  model: Account,
+                  attributes: {
+                    exclude: [
+                      'password',
+                      'googleId',
+                      'password',
+                      'wallet',
+                      'verified',
+                      'active',
+                      'passwordResetToken',
+                      'passwordResetExpires',
+                      'updatedAt',
+                      'createdAt'
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        });
+
+        if (!contract) {
+          return next(new AppError(`Contract with ID ${id} not found`, 404));
+        }
+
+        res.status(200).json({
           success: true,
-          message: 'fetch all aplicants',
-          data: applicant
+          message: 'Contract fetched successfully',
+          data: contract
         });
       } catch (error: any) {
-        return next(new AppError(error.message, error.code));
+        return next(new AppError(error.message, error.code || 500));
       }
     }
   );
+
+  public updateContractStatusDoing = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { id } = req.params;
+      try {
+        const contract = await Contract.findByPk(id);
+
+        if (!contract) {
+          return next(new AppError(`Contract with ID ${id} not found`, 404));
+        }
+
+        await contract.update({ status: 'doing' });
+
+        res.status(200).json({
+          success: true,
+          message: 'Contract status updated to "doing"',
+          data: contract
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code || 500));
+      }
+    }
+  );
+
+  public updateContractStatusToCanceled = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { id } = req.params; //
+      try {
+        const contract = await Contract.findByPk(id);
+
+        if (!contract) {
+          return next(new AppError(`Contract with ID ${id} not found`, 404));
+        }
+
+        await contract.update({ status: 'canceled' });
+
+        res.status(200).json({
+          success: true,
+          message: 'Contract status updated to "canceled"',
+          data: contract 
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code || 500));
+      }
+    }
+  );
+
+  public updateContractStatusToCompleted = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params; // Assuming contract ID 
+    try {
+      const contract = await Contract.findByPk(id);
+  
+      if (!contract) {
+        return next(new AppError(`Contract with ID ${id} not found`, 404));
+      }
+  
+      await contract.update({ status: "completed" });
+  
+      res.status(200).json({
+        success: true,
+        message: 'Contract status updated to "completed"',
+        data: contract 
+      });
+    } catch (error: any) {
+      return next(new AppError(error.message, error.code || 500));
+    }
+  });
 }
 
 export default new ApplicantController();

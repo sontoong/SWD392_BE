@@ -21,6 +21,7 @@ import authRouter from './routes/auth.route';
 import postRouter from './routes/post.route';
 import jobTitleRouter from './routes/jobTitle.route';
 import orderRouter from './routes/order.route'
+import contractRouter from "./routes/contract.route"
 import morgan from 'morgan';
 const app = express();
 
@@ -108,6 +109,7 @@ app.use('/api/v1/posts', postRouter);
 app.use('/api/v1/job-titles', jobTitleRouter);
 app.use('/api/v1/order', orderRouter)
 app.use('/api/v1/applicant' , applicantRouter);
+app.use('/api/v1/contract' , contractRouter)
 // 3) ERROR HANDLING
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
