@@ -96,8 +96,6 @@ class PostController {
             { description: { [Op.like]: `%${search}%` } }
           ]
         },
-        include: [{ model: JobTitle }, { model: Account }],
-
         offset,
         limit
       });
@@ -135,12 +133,7 @@ class PostController {
 
   public getOneProject = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const project = await Project.findByPk(req.params.id, {
-        include: [
-          { model: JobTitle },
-          { model: Account, attributes: { exclude: ['password'] } }
-        ]
-      });
+      const project = await Project.findByPk(req.params.id);
       if (!project) {
         return next(new AppError('hello error', 404));
       }
