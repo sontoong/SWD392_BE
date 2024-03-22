@@ -7,7 +7,7 @@ import Project, {
   OptionalRequirements,
   ProjectAttributes
 } from '~/database/models/project.model';
-import { Op } from 'sequelize';
+import { Op, where } from 'sequelize';
 import { union } from 'lodash';
 import JobTitle from '~/database/models/jobTitle.model';
 import Account from '~/database/models/account.model';
@@ -56,6 +56,77 @@ class ApplicantController {
           success: true,
           message: 'Applicant created successfully.',
           data: newApplicant
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code));
+      }
+    }
+  );
+
+  public updateStatusApplicantToRejected = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { id } = req.params;
+      try {
+        const applicant = await Applicant.findByPk(id);
+        if (!applicant) {
+          return next(new AppError(`Applicant ith ID ${id} not found`, 404));
+        }
+        await applicant.update({ status: 'rejected' });
+        res.status(201).json({
+          success: true,
+          message: 'Applicant update Rejected'
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code));
+      }
+    }
+  );
+
+  public updateStatusApplicantToAccepted = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { id } = req.params;
+      try {
+        const applicant = await Applicant.findByPk(id);
+        if (!applicant) {
+          return next(new AppError(`Applicant ith ID ${id} not found`, 404));
+        }
+        await applicant.update({ status: 'accepted' });
+        res.status(201).json({
+          success: true,
+          message: 'Applicant update Accepted'
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code));
+      }
+    }
+  );
+
+
+  public getAllApplicant = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const allApplicant = await Applicant.findAll({})
+       
+        res.status(201).json({
+          success: true,
+          message: 'fetch all aplicants',
+          data: allApplicant
+        });
+      } catch (error: any) {
+        return next(new AppError(error.message, error.code));
+      }
+    }
+  );
+
+
+  public getAllApplicantByID = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const applicant = await Applicant.findByPk(req.params.id)
+        res.status(201).json({
+          success: true,
+          message: 'fetch all aplicants',
+          data: applicant
         });
       } catch (error: any) {
         return next(new AppError(error.message, error.code));

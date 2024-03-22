@@ -31,7 +31,8 @@ export interface ApplicantAttributes {
   candidateId: number;
   question: Question[];
   money: number;
-  time : number;
+  time: number;
+  status?: string;
 }
 @Table({
   timestamps: true,
@@ -84,6 +85,13 @@ class Applicant extends Model<ApplicantAttributes> {
     type: DataType.INTEGER
   })
   time!: number;
+
+  @Column({
+    allowNull: true,
+    type: DataType.ENUM('accepted', 'rejected', 'pending'),
+    defaultValue:"pending"
+  })
+  status!: string;
 }
 
 export default Applicant;
