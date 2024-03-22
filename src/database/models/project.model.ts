@@ -83,8 +83,6 @@ class Project extends Model<ProjectAttributes> {
   createdByProjectField!: JobTitle;
   
 
-
-
   @Column({
     allowNull: false,
     type: DataType.TEXT

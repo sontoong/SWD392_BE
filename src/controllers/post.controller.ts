@@ -10,6 +10,7 @@ import Project, {
 import { Op } from 'sequelize';
 import { union } from 'lodash';
 import JobTitle from '~/database/models/jobTitle.model';
+import Account from '~/database/models/account.model';
 interface Pagination {
   page: number;
   limit: number;
@@ -95,7 +96,6 @@ class PostController {
             { description: { [Op.like]: `%${search}%` } }
           ]
         },
-        include: [{ model: JobTitle }],
         offset,
         limit
       });
@@ -133,9 +133,7 @@ class PostController {
 
   public getOneProject = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const project = await Project.findByPk(req.params.id, {
-        include: [{ model: JobTitle }]
-      });
+      const project = await Project.findByPk(req.params.id);
       if (!project) {
         return next(new AppError('hello error', 404));
       }
