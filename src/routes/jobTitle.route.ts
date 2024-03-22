@@ -1,5 +1,7 @@
 import express from 'express';
 import jobTitleController from '~/controllers/jobTitle.controller';
+import skillController from '~/controllers/skill.controller';
+import Skill from '~/database/models/skill.model';
 import { protectRoute, restrictTo } from '~/middlewares/jwt.middleware';
 const router = express.Router();
 
@@ -117,14 +119,37 @@ router
   .get(protectRoute, jobTitleController.getAllJobTitles)
   .post(protectRoute, jobTitleController.createJobTitle);
 router.get(
-  '/search/:jobTitleName',
+  '/search-by-name/:jobTitleName',
   protectRoute,
   jobTitleController.getJobTitleByName
 );
+
+router.get('/search/:jobId', protectRoute, jobTitleController.getJobTitleById);
+
 router.get(
   '/popular',
   protectRoute,
   jobTitleController.getMostPopularJobTitles
+);
+
+router.get(
+  '/:jobId/skills',
+  protectRoute,
+  skillController.getSkillBasedOnJobId
+);
+
+router.get('/:jobId', protectRoute, jobTitleController.getJobTitleById);
+
+router.put(
+  '/:jobId/skills/:skillId',
+  protectRoute,
+  jobTitleController.addSkillToJobTitle
+);
+
+router.delete(
+  '/:jobId/skills/:skillId',
+  protectRoute,
+  jobTitleController.removeSkillOfJobTitle
 );
 
 export default router;

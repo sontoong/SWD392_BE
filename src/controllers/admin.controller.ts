@@ -11,6 +11,7 @@ import Language from '~/database/models/language.model';
 import JobTitle from '~/database/models/jobTitle.model';
 import Skill from '~/database/models/skill.model';
 import Rating from '~/database/models/rating.model';
+import Project from '~/database/models/project.model';
 
 interface Pagination {
   page: number;
@@ -368,6 +369,32 @@ class AdminController {
           candidate,
           ratings,
           comments
+        }
+      });
+    }
+  );
+
+  public getDashboardData = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const candidateCount = await Account.count({
+        where: { role: 'candidate' }
+      });
+      const enterpriseCount = await Account.count({
+        where: { role: 'enterprise' }
+      });
+      const unverifiedCount = await Account.count({
+        where: { verified: false }
+      });
+      const completedProjectCount = await Project.count({
+        where: { isCompleted: true }
+      });
+      res.status(200).json({
+        status: 'success',
+        data: {
+          candidateCount,
+          enterpriseCount,
+          unverifiedCount,
+          completedProjectCount
         }
       });
     }
