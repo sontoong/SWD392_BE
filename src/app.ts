@@ -13,7 +13,7 @@ import specs from './configs/swaggerConfig';
 
 import AppError from './utils/appError';
 import globalErrorHandler from './utils/globalErrorHandler';
-
+import applicantRouter from "./routes/applicant.route"
 import adminRouter from './routes/admin.route';
 import candidateRouter from './routes/candidate.route';
 import enterpriseRouter from './routes/enterprise.route';
@@ -107,6 +107,7 @@ app.use('/api/v1/enterprises', enterpriseRouter);
 app.use('/api/v1/posts', postRouter);
 app.use('/api/v1/job-titles', jobTitleRouter);
 app.use('/api/v1/order', orderRouter)
+app.use('/api/v1/applicant' , applicantRouter);
 // 3) ERROR HANDLING
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));

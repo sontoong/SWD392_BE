@@ -256,6 +256,52 @@ class PostController {
     }
   );
 
+  public getAllProjectByEnterPrise = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const enterpriseId = req.params.enterpriseId;
+      const projects = await Project.findAll({
+        where: {
+          createdBy: enterpriseId
+        },
+
+        include: [
+          {
+            model: Account,
+            attributes: {
+              exclude: [
+                'password',
+                'passwordResetToken',
+                'passwordResetExpires',
+                'active',
+                'createdAt',
+                'updatedAt',
+                'verified'
+              ]
+            }
+          },
+          { model: JobTitle }
+        ]
+      });
+      if (!projects) {
+        return next(new AppError('hello error', 404));
+      }
+
+      const parsedProjects = projects.map((project) => {
+        const parsedOptionalRequirements: OptionalRequirements = JSON.parse(
+          String(project.optionalRequirements)
+        );
+        return {
+          ...project.toJSON(),
+          optionalRequirements: parsedOptionalRequirements
+        };
+      });
+      res.status(200).json({
+        status: 'success',
+        projects: parsedProjects
+      });
+    }
+  );
+
   public createPost = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       const {
