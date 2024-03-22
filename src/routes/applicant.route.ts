@@ -9,5 +9,5 @@ router.route('/create').post(applicantsController.createNewApplicant);
 router.route('/rejected').put(applicantsController.updateStatusApplicantToRejected)
 router.route('/accepted').put(applicantsController.updateStatusApplicantToAccepted);
 router.route('/').get(applicantsController.getAllApplicant)
-router.route('/:id').get(applicantsController.getAllApplicantByID)
+router.route('/detail/:id').get(applicantsController.getAllApplicantByID)
 export default router;
