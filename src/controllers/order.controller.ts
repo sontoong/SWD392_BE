@@ -12,7 +12,7 @@ class OrderController {
           res.status(200).send();
           return;
         }
-        const { amount = 10000, bankCode, language, order_id = 1 } = req.body;
+        const { amount = 10000, bankCode, language } = req.body;
 
         process.env.TZ = 'Asia/Ho_Chi_Minh';
         let date = new Date();
@@ -29,8 +29,7 @@ class OrderController {
         let secretKey = process.env.VNP_HASHSECRET;
         let vnpUrl = process.env.VNP_URL;
         let returnUrl = 'http://localhost:8080/api/v1/order/vnp/return';
-        // let orderId = moment(date).format("DDHHmmss");
-        let orderId = order_id;
+        let orderId = moment(date).format("DDHHmmss");
         let locale = language;
         if (locale === null || locale === '') {
           locale = 'vn';
@@ -70,6 +69,36 @@ class OrderController {
         });
       } catch (error: any) {
         return next(new AppError('Internal Server Error', 500));
+      }
+    }
+  );
+
+  public getReturnPayment = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const vnp_Params = req.query;
+      const amount = req.query.vnp_Amount;
+      const secureHash = vnp_Params['vnp_SecureHash'];
+      delete vnp_Params['vnp_SecureHash'];
+      delete vnp_Params['vnp_SecureHashType'];
+      const SORTED_vnp_Params = sortObject(Object(vnp_Params));
+      const tmnCode = process.env.VNP_TMNCODE;
+      const secretKey = process.env.VNP_HASHSECRET || '';
+      const signData = queryString.stringify(SORTED_vnp_Params, {
+        encode: false
+      });
+      const hmac = crypto.createHmac('sha512', secretKey);
+      const signed = hmac.update(new Buffer(signData, 'utf-8')).digest('hex');
+      const order_id = req.query.vnp_TxnRef;
+      console.log('secureHash', secureHash);
+      console.log('order_id', order_id);
+      console.log('signed', signed);
+      if (secureHash === signed) {
+        const returnUrl = 'http://localhost:3000';
+        // const redirectUrl = `${returnUrl}?order_id=${order_id}&amount=${amount}`;
+        res.redirect(returnUrl);
+        console.log('result:', vnp_Params);
+      } else {
+        res.render('failed', { code: '97' });
       }
     }
   );

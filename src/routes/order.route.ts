@@ -5,5 +5,5 @@ import { protectRoute, restrictTo } from '~/middlewares/jwt.middleware';
 const router = express.Router();
 
 router.route('/create-payment').post(orderController.CreateVnPayPayment);
-
+router.route('/vnp/return').get(orderController.getReturnPayment)
 export default router;
