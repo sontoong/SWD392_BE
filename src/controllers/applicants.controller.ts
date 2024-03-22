@@ -37,7 +37,6 @@ class ApplicantController {
             new AppError(`Project with ID ${projectId} not found`, 404)
           );
         }
-        // Check if candidate exists
         const candidate = await Account.findByPk(candidateId);
         if (!candidate) {
           return next(
