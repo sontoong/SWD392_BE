@@ -15,7 +15,7 @@ import Applicant, {
   ApplicantAttributes
 } from '~/database/models/applicant.model';
 class ApplicantController {
-  public createNewPost = catchAsync(
+  public createNewApplicant = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       const { projectId, candidateId, question, money, time } = req.body;
       try {
