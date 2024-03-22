@@ -9,6 +9,8 @@ import Project, {
 } from '~/database/models/project.model';
 import { Op } from 'sequelize';
 import { union } from 'lodash';
+import JobTitle from '~/database/models/jobTitle.model';
+import Account from '~/database/models/account.model';
 interface Pagination {
   page: number;
   limit: number;
@@ -94,6 +96,8 @@ class PostController {
             { description: { [Op.like]: `%${search}%` } }
           ]
         },
+        include: [{ model: JobTitle }, { model: Account }],
+
         offset,
         limit
       });
@@ -131,7 +135,9 @@ class PostController {
 
   public getOneProject = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const project = await Project.findByPk(req.params.id);
+      const project = await Project.findByPk(req.params.id, {
+        include: [{ model: JobTitle }, { model: Account}]
+      });
       if (!project) {
         return next(new AppError('hello error', 404));
       }
@@ -191,7 +197,6 @@ class PostController {
         if (optionalRequirements) {
           // Parse the existing optionalRequirements string into an object
           // const updateOptional = JSON.parse(existingProject.optionalRequirements || undefined);
-          
           // Update the properties with new values
           // updateOptional.minimumCompletedProjects = optionalRequirements.minimumCompletedProjects || updateOptional.minimumCompletedProjects;
           // updateOptional.rating = optionalRequirements.rating || updateOptional.rating;
@@ -199,11 +204,10 @@ class PostController {
           // updateOptional.language = optionalRequirements.language || updateOptional.language;
           // updateOptional.skills = optionalRequirements.skills || updateOptional.skills;
           // updateOptional.questions = optionalRequirements.questions || updateOptional.questions;
-  
           // Convert the updated object back to a string
           // existingProject.optionalRequirements = JSON.stringify(updateOptional);
         }
-  
+
         //optional requirements
         await existingProject.save();
 
