@@ -17,4 +17,9 @@ router.route('/canceled').get(contractController.getAllContractsCanceled)
 router.route('/completed').get(contractController.getAllContractsCompleted)
 router.route('/pending').get(contractController.getAllContractsPending)
 router.route('/signature').put(contractController.updateContractSignature)
+
+// get by id
+router.route('/get/project/:projectId').get(contractController.getContractByProjectId);
+router.route('/get/enterprise/:enterpriseId').get(contractController.getContractByEnterPriseId);
+router.route('/get/candidate/:candidateId').get(contractController.getContractByCandidateId)
 export default router;
