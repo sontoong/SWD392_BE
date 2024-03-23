@@ -176,7 +176,7 @@ router.get(
  *         description: Enterprise account not found
  */
 router
-  .route('/enterprise/:username')
+  .route('/enterprise/:id')
   .get(
     protectRoute,
     restrictTo('admin'),
@@ -226,10 +226,10 @@ router
  */
 
 router.patch(
-  '/verify/:username',
+  '/verify/:id',
   protectRoute,
   restrictTo('admin'),
-  adminController.verifyUserAndAddRole
+  adminController.verifyUser
 );
 
 /**
@@ -257,7 +257,7 @@ router.patch(
  *         description: User account not found
  */
 router.patch(
-  '/deactivate/:username',
+  '/deactivate/:id',
   protectRoute,
   restrictTo('admin'),
   adminController.deactivateAccount
@@ -288,10 +288,19 @@ router.patch(
  *         description: User account not found
  */
 router.patch(
-  '/activate/:username',
+  '/activate/:id',
   protectRoute,
   restrictTo('admin'),
   adminController.activateAccount
 );
+
+router.get(
+  '/user-list',
+  protectRoute,
+  restrictTo('admin'),
+  adminController.getAllUserList
+);
+
+router.get('/profile/:id/', protectRoute, adminController.viewProfileById);
 
 export default router;

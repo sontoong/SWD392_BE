@@ -42,7 +42,7 @@ interface CandidateInfoAttributes {
   gender: 'male' | 'female' | 'other';
   address: string;
   nationality: string;
-  experience?: 'junior' | 'middle' | 'senior' | 'expert';
+  experience?: 'junior' | 'senior' | 'expert';
   specialty?: string;
   dob: Date;
   profileDescription: string;

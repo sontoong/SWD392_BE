@@ -5,6 +5,19 @@ import CandidateInfo from '~/database/models/candidateInfo.model';
 import AppError from '~/utils/appError';
 import catchAsync from '../utils/catchAsync';
 import _ from 'lodash';
+import { Op } from 'sequelize';
+import sequelize from 'sequelize';
+import Language from '~/database/models/language.model';
+import JobTitle from '~/database/models/jobTitle.model';
+import Skill from '~/database/models/skill.model';
+import Rating from '~/database/models/rating.model';
+import Project from '~/database/models/project.model';
+
+interface Pagination {
+  page: number;
+  limit: number;
+  search: string;
+}
 
 class AdminController {
   public getEnterpriseAccountList = catchAsync(
@@ -21,9 +34,9 @@ class AdminController {
 
   public getEnterpriseAccountDetail = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const { username } = req.params;
+      const { id } = req.params;
       const enterpriseAccount = await Account.findOne({
-        where: { username, role: 'enterprise' },
+        where: { accountId: id, role: 'enterprise' },
         include: [EnterpriseInfo]
       });
       if (!enterpriseAccount) {
@@ -50,9 +63,9 @@ class AdminController {
 
   public getCandidateAccountDetail = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const { username } = req.params;
+      const { id } = req.params;
       const candidateAccount = await Account.findOne({
-        where: { username, role: 'candidate' },
+        where: { accountId: id, role: 'candidate' },
         include: [CandidateInfo]
       });
       if (!candidateAccount) {
@@ -64,17 +77,54 @@ class AdminController {
       });
     }
   );
-  public getUserList = catchAsync(
+
+  public getAllUserList = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const userList = await Account.findAll({
-        where: {
-          role: 'user',
-          verified: false
-        }
+      const { page = 1, limit = 10, search = '' } = req.body as Pagination;
+
+      const offset = (page - 1) * limit;
+      const accounts = await Account.findAll({
+        offset,
+        limit
       });
+
+      const totalCount = await Account.count({});
+
       res.status(200).json({
         status: 'success',
-        data: userList
+        data: {
+          accounts: accounts,
+          totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+          currentPage: page
+        }
+      });
+    }
+  );
+
+  public getUnverifiedList = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { page = 1, limit = 10, search = '' } = req.body as Pagination;
+
+      const offset = (page - 1) * limit;
+      const unverifiedList = await Account.findAll({
+        where: {
+          role: 'candidate' || 'enterprise',
+          verified: false
+        },
+        offset,
+        limit
+      });
+      const totalCount = await Account.count({});
+
+      res.status(200).json({
+        status: 'success',
+        data: {
+          accounts: unverifiedList,
+          totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+          currentPage: page
+        }
       });
     }
   );
@@ -99,25 +149,25 @@ class AdminController {
     }
   );
 
-  public verifyUserAndAddRole = catchAsync(
+  public verifyUser = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const { username } = req.params;
-      const { role } = req.body;
+      const { id } = req.params;
+      // const { role } = req.body;
       const user = await Account.findOne({
         where: {
-          username,
-          role: 'user',
+          accountId: id,
+          // role: 'user',
           verified: false
         }
       });
       if (!user) {
-        return next(new AppError('User not found', 404));
+        return next(new AppError('User not found or is verified', 404));
       }
-      if (role === user.role) {
-        return next(new AppError('User already has this role', 400));
-      }
+      // if (role === user.role) {
+      //   return next(new AppError('User already has this role', 400));
+      // }
       user.verified = true;
-      user.role = role;
+      // user.role = role;
       await user.save();
       res.status(200).json({
         status: 'success',
@@ -128,10 +178,10 @@ class AdminController {
 
   public deactivateAccount = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const { username } = req.params;
+      const { id } = req.params;
       const account = await Account.findOne({
         where: {
-          username,
+          accountId: id,
           active: true
         }
       });
@@ -149,10 +199,10 @@ class AdminController {
 
   public activateAccount = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const { username } = req.params;
+      const { id } = req.params;
       const account = await Account.findOne({
         where: {
-          username,
+          accountId: id,
           active: false
         }
       });
@@ -241,6 +291,114 @@ class AdminController {
       }
     }
   };
+
+  public viewProfileById = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const accountId = req.params.id;
+      const sortBy = req.body.sortBy || 'createdAt';
+
+      const { page = 1, limit = 10, search = '' } = req.body as Pagination;
+
+      const offset = (page - 1) * limit;
+      // const allowedFields = ALLOWED_ACCOUNT_FIELDS;
+      const candidate = await Account.findOne({
+        where: { accountId: accountId },
+        // attributes: allowedFields,
+        include: [
+          {
+            model: CandidateInfo,
+            include: [
+              {
+                model: Language,
+                as: 'languages',
+                attributes: ['languageId', 'name']
+              },
+              {
+                model: JobTitle,
+                as: 'jobTitle',
+                include: [
+                  {
+                    model: Skill,
+                    as: 'skills',
+                    attributes: ['skillId', 'skillName']
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      });
+      if (!candidate) {
+        return next(new AppError('Candidate not found', 404));
+      }
+
+      const ratings = await Rating.findAll({
+        where: { candidateUsername: candidate.username },
+        attributes: [
+          [sequelize.fn('avg', sequelize.col('price')), 'avg_price'],
+          [sequelize.fn('avg', sequelize.col('time')), 'avg_time'],
+          [
+            sequelize.fn('avg', sequelize.col('responsibility')),
+            'avg_responsibility'
+          ],
+          [
+            sequelize.fn('avg', sequelize.col('communication')),
+            'avg_communication'
+          ],
+          [
+            sequelize.fn('avg', sequelize.col('overallRating')),
+            'avg_overallRating'
+          ],
+          [sequelize.fn('count', sequelize.col('comment')), 'comment_count']
+        ],
+        group: ['candidateUsername'],
+        raw: true
+      });
+
+      const comments = await Rating.findAll({
+        where: { candidateUsername: candidate.username },
+        attributes: ['comment', 'overallRating', 'enterpriseUsername'],
+        order: [[sortBy, 'DESC']], // Assuming you want to sort comments by 'sortBy'
+        limit: limit,
+        offset: offset
+      });
+
+      res.status(200).json({
+        status: 'success',
+        data: {
+          candidate,
+          ratings,
+          comments
+        }
+      });
+    }
+  );
+
+  public getDashboardData = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const candidateCount = await Account.count({
+        where: { role: 'candidate' }
+      });
+      const enterpriseCount = await Account.count({
+        where: { role: 'enterprise' }
+      });
+      const unverifiedCount = await Account.count({
+        where: { verified: false }
+      });
+      const completedProjectCount = await Project.count({
+        where: { isCompleted: true }
+      });
+      res.status(200).json({
+        status: 'success',
+        data: {
+          candidateCount,
+          enterpriseCount,
+          unverifiedCount,
+          completedProjectCount
+        }
+      });
+    }
+  );
 }
 
 export default new AdminController();
